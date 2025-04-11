@@ -1,2 +1,4 @@
 .qodo
-/canvas_cameo/node_modules
+node_modules/
+**/node_modules/
+

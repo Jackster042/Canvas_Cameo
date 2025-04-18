@@ -900,16 +900,6 @@
     }
   }
 
-  .bg-black\/\[\.05\] {
-    background-color: #0000000d;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-black\/\[\.05\] {
-      background-color: color-mix(in oklab, var(--color-black) 5%, transparent);
-    }
-  }
-
   .bg-border {
     background-color: var(--border);
   }
@@ -980,10 +970,6 @@
 
   .py-0 {
     padding-block: calc(var(--spacing) * 0);
-  }
-
-  .py-0\.5 {
-    padding-block: calc(var(--spacing) * .5);
   }
 
   .py-1 {
@@ -1835,16 +1821,6 @@
   @supports (color: color-mix(in lab, red, red)) {
     .dark\:bg-input\/30:is(.dark *) {
       background-color: color-mix(in oklab, var(--input) 30%, transparent);
-    }
-  }
-
-  .dark\:bg-white\/\[\.06\]:is(.dark *) {
-    background-color: #ffffff0f;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .dark\:bg-white\/\[\.06\]:is(.dark *) {
-      background-color: color-mix(in oklab, var(--color-white) 6%, transparent);
     }
   }
 

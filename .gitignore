@@ -1,4 +1,7 @@
 .qodo
 node_modules/
 **/node_modules/
+canvas_cameo/.env.local
+
+QAuth.txt
 

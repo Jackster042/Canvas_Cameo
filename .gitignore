@@ -3,5 +3,10 @@ node_modules/
 **/node_modules/
 canvas_cameo/.env.local
 
+/server/api-getaway/.env
+/server/design-service/.env
+/server/subscription-service/.env
+/server/upload-service/.env
+
 QAuth.txt
 

@@ -10,7 +10,7 @@ export default auth((req) => {
     return Response.redirect(new URL("/", req.url));
   }
 
-  if (!isAuthUser) {
+  if (!isAuthUser && !isLoginPage) {
     return Response.redirect(new URL("/login", req.url));
   }
 });

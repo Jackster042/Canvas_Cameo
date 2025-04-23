@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -6,8 +7,8 @@ const path = require("path");
 const proxy = require("express-http-proxy");
 const jwt = require("jsonwebtoken");
 const { authMiddleware } = require("./middlewares/auth-middleware");
-const app = express();
 
+const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(helmet());
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// PROXY OPTIONS
 const proxyOptions = {
   proxyReqPathResolver: (req) => {
     return req.originalUrl.replace(/^\/v1/, "/api");
@@ -36,13 +38,13 @@ app.use(
 app.use(
   "/v1/media",
   authMiddleware,
-  proxy(process.env.UPLOAD, { ...proxyOptions, parseReqBody: true })
+  proxy(process.env.UPLOAD, { ...proxyOptions, parseReqBody: false })
 );
 
 app.use(
   "/v1/media/upload",
   authMiddleware,
-  proxyOptions(process.env.UPLOAD, { ...proxyOptions, parseReqBody: false })
+  proxy(process.env.UPLOAD, { ...proxyOptions, parseReqBody: false })
 );
 
 app.use(

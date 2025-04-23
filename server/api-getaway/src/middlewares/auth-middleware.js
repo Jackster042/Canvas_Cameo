@@ -1,7 +1,8 @@
 const { OAuth2Client } = require("google-auth-library");
+
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-export const authMiddleware = async (req, res, next) => {
+async function authMiddleware(req, res, next) {
   const authHeader = req.headers["authorization"];
   console.log(authHeader, "authHeader from AUTH MIDDLEWARE");
 
@@ -27,8 +28,10 @@ export const authMiddleware = async (req, res, next) => {
       name: payload["name"],
     };
 
+    // ADD USER ID TO HEADERS DOWNSTREAM
     req.headers["x-user-id"] = payload["sub"];
 
+    // OPTIONAL HEADERS
     req.headers["x-user-email"] = payload["email"];
     req.headers["x-user-name"] = payload["name"];
 
@@ -39,4 +42,6 @@ export const authMiddleware = async (req, res, next) => {
       error: "Invalid token!",
     });
   }
-};
+}
+
+module.exports = { authMiddleware };

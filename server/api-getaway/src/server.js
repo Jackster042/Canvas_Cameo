@@ -47,11 +47,12 @@ app.use(
   proxy(process.env.UPLOAD, { ...proxyOptions, parseReqBody: false })
 );
 
-app.use(
-  "/v1/subscription",
-  authMiddleware,
-  proxy(process.env.SUBSCRIPTION, { ...proxyOptions })
-);
+// TODO: SUBSCRIPTION SERVICE LATER
+// app.use(
+//   "/v1/subscription",
+//   authMiddleware,
+//   proxy(process.env.SUBSCRIPTION, { ...proxyOptions })
+// );
 
 app.listen(PORT, () => {
   console.log(`API Gateway is running on port ${PORT}`);

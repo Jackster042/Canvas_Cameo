@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
-const subscriptionRoutes = require("./routes/subscription-routes");
+// const subscriptionRoutes = require("./routes/subscription-routes");
 
 const app = express();
 const PORT = process.env.PORT || 5003;
@@ -18,7 +18,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/subscription", subscriptionRoutes);
+// app.use("/api/subscription", subscriptionRoutes);
 
 async function startServer() {
   try {

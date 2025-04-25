@@ -350,6 +350,10 @@
     margin-top: calc(var(--spacing) * 3);
   }
 
+  .ml-\[72px\] {
+    margin-left: 72px;
+  }
+
   .block {
     display: block;
   }
@@ -706,6 +710,10 @@
 
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
+  }
+
+  .pt-20 {
+    padding-top: calc(var(--spacing) * 20);
   }
 
   .pr-8 {

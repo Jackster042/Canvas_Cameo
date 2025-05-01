@@ -30,7 +30,7 @@ const proxyOptions = {
 };
 
 app.use(
-  "/vi/designs",
+  "/v1/designs",
   authMiddleware,
   proxy(process.env.DESIGN, { ...proxyOptions })
 );

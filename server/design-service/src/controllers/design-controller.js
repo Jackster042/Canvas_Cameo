@@ -6,6 +6,14 @@ exports.getUserDesigns = async (req, res, next) => {
     console.log(userId, "userId from GET USER DESIGNS CONTROLLER ");
 
     const designs = await DesignModel.find({ userId }).sort({ createdAt: -1 }); // most recent one
+    console.log(designs, "designs from GET USER DESIGNS CONTROLLER ");
+
+    if (!designs) {
+      return res.status(404).json({
+        success: false,
+        message: "No designs found",
+      });
+    }
 
     return res.status(200).json({
       success: true,

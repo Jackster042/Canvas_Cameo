@@ -4,7 +4,6 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 async function authMiddleware(req, res, next) {
   const authHeader = req.headers["authorization"];
-  console.log(authHeader, "authHeader from AUTH MIDDLEWARE");
 
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
@@ -18,7 +17,6 @@ async function authMiddleware(req, res, next) {
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-    console.log(ticket, "ticket from AUTH MIDDLEWARE");
 
     const payload = ticket.getPayload();
 

@@ -481,10 +481,6 @@
     right: calc(var(--spacing) * 4);
   }
 
-  .bottom-2 {
-    bottom: calc(var(--spacing) * 2);
-  }
-
   .left-0 {
     left: calc(var(--spacing) * 0);
   }
@@ -1144,10 +1140,6 @@
 
   .fill-current {
     fill: currentColor;
-  }
-
-  .object-cover {
-    object-fit: cover;
   }
 
   .p-1 {

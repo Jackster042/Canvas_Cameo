@@ -6,7 +6,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 
 // ROUTES
-// const designRoutes = require("./routes/design-routes");
+const designRoutes = require("./routes/design-routes");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -21,7 +21,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use("/api/designs", designRoutes);
+app.use("/api/designs", designRoutes);
 
 async function startServer() {
   try {

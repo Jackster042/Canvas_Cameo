@@ -38,9 +38,7 @@ export default function Header() {
                   aria-label="User menu"
                 >
                   <Avatar>
-                    <AvatarImage
-                      src={session?.user?.image || "/placeholder-user.jpg"}
-                    />
+                    <AvatarImage src={session?.user?.image || "./cat.png"} />
                     <AvatarFallback>
                       {session?.user?.name?.[0]?.toUpperCase() || "U"}
                     </AvatarFallback>

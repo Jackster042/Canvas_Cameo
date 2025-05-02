@@ -1,9 +1,52 @@
 "use client";
 
-import { Crown } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { Crown, Loader } from "lucide-react";
 import { Button } from "../ui/button";
 
-export default function Banner() {
+import { saveDesign } from "@/services/design-service";
+
+interface DesignData {
+  name: string;
+  canvasData: string | null;
+  width: number;
+  height: number;
+  category: string;
+}
+
+function Banner() {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleCreateDesign = async () => {
+    if (loading) return;
+    try {
+      setLoading(true);
+
+      const initialDesignData = {
+        name: "New Design",
+        canvasData: null,
+        width: 825,
+        height: 465,
+        category: "youtube_thumbnail",
+      };
+
+      const newDesign = await saveDesign(initialDesignData, null);
+      // console.log(newDesign, "newDesign");
+      if (newDesign?.success) {
+        router.push(`/editor/${newDesign?.data?._id}`);
+        setLoading(false);
+      } else {
+        throw new Error(`Failed to create new design`);
+      }
+    } catch (err) {
+      console.error(err, "error from HANDLE CRATE DESIGN");
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="rounded-xl overflow-hidden bg-gradient-to-r from-[#00c4cc] via-[#8b3dff] to-[#5533ff] text-white sm:p-6 md:p-8 text-center">
@@ -19,10 +62,15 @@ export default function Banner() {
         </h2>
 
         {/* CTA */}
-        <Button className="text-[#8b3dff] bg-white hover:bg-gray-100 rounded-lg px-4 py-4 sm:px-6 sm:py-2.5 mb-2 cursor-pointer">
-          Start Design
+        <Button
+          onClick={handleCreateDesign}
+          className="text-[#8b3dff] bg-white hover:bg-gray-100 rounded-lg px-4 py-4 sm:px-6 sm:py-2.5 mb-2 cursor-pointer"
+        >
+          {loading ? <Loader className="animate-spin" /> : "Start Design"}
         </Button>
       </div>
     </>
   );
 }
+
+export default Banner;

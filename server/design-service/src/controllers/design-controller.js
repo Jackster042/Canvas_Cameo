@@ -33,8 +33,8 @@ exports.getUserDesignsById = async (req, res, next) => {
   try {
     const userId = req.user.userId;
     const designId = req.params.id;
-    console.log(userId, "userId from GET USER DESIGNS BY ID CONTROLLER ");
-    console.log(designId, "designId from GET USER DESIGNS BY ID CONTROLLER ");
+    // console.log(userId, "userId from GET USER DESIGNS BY ID CONTROLLER ");
+    // console.log(designId, "designId from GET USER DESIGNS BY ID CONTROLLER ");
 
     const design = await DesignModel.findOne({ _id: designId, userId });
 

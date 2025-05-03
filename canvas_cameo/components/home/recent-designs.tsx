@@ -1,10 +1,13 @@
 "use client";
 
-import { getUserDesigns } from "@/services/design-service";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { getUserDesigns } from "@/services/design-service";
 
 function RecentDesigns() {
   const [userDesigns, setUserDesigns] = useState<any[]>([]);
+  const router = useRouter();
 
   async function fetchDesigns() {
     const result = await getUserDesigns();
@@ -23,7 +26,7 @@ function RecentDesigns() {
   //     title: `Design${i + 1}`,
   //     thumbnail: "/placeholder-design.svg",
   //   }));
-  // console.log(designs);
+  console.log(userDesigns, "userDesigns");
   return (
     <>
       <div>
@@ -34,7 +37,10 @@ function RecentDesigns() {
           )}
           {userDesigns.map((design) => (
             <div key={design._id} className="group cursor-pointer">
-              <div className="aspect-video bg-gray-100 rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md" />
+              <div
+                onClick={() => router.push(`/editor/${design._id}`)}
+                className="aspect-video bg-gray-100 rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md"
+              />
               <p className="text-sm font-bold truncate text-center">
                 {design.name}
               </p>

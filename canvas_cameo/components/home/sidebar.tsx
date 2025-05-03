@@ -1,14 +1,53 @@
 "use client";
 
-import { CreditCard, FolderOpen, Home, Plus } from "lucide-react";
+import { useState } from "react";
 import Link from "next/link";
 
+import { CreditCard, FolderOpen, Home, Plus } from "lucide-react";
+import { saveDesign } from "@/services/design-service";
+import { useRouter } from "next/navigation";
+
+interface DesignData {
+  name: string;
+  canvasData: string | null;
+  width: number;
+  height: number;
+  category: string;
+}
+
 export default function Sidebar() {
+  const router = useRouter();
+
+  const handleCreateDesign = async () => {
+    try {
+      const initialDesign = {
+        name: "New Design",
+        canvasData: null,
+        width: 825,
+        height: 465,
+        category: "youtube_thumbnail",
+      };
+
+      const newDesign = await saveDesign(initialDesign, null);
+
+      if (newDesign?.success) {
+        router.push(`/editor/${newDesign?.data?._id}`);
+      } else {
+        throw new Error(`Failed to create new design`);
+      }
+    } catch (err) {
+      console.error(err, "Error from SIDEBAR CREATE DESIGN");
+    }
+  };
+
   return (
     <>
       <aside className="w-[72px] bg-[#f8f8fc] border-r flex flex-col items-center py-4 fixed left-0 top-0 h-full z-20">
         <div className="flex flex-col items-center">
-          <button className="w-12 h-12 bg-purple-600 cursor-pointer rounded-full flex items-center justify-center text-white hover:bg-purple-700 transition-colors duration-200">
+          <button
+            onClick={handleCreateDesign}
+            className="w-12 h-12 bg-purple-600 cursor-pointer rounded-full flex items-center justify-center text-white hover:bg-purple-700 transition-colors duration-200"
+          >
             <Plus className="w-6 h-6 text-white" />
           </button>
           <div className="text-xs font-medium text-center mt-1 text-gray-700">

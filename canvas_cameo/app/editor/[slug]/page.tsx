@@ -1,5 +1,12 @@
 "use client";
 
+import { Fragment } from "react";
+import MainEditor from "@/components/editor";
+
 export default function EditorPage() {
-  return <div>Editor Page</div>;
+  return (
+    <Fragment>
+      <MainEditor />
+    </Fragment>
+  );
 }

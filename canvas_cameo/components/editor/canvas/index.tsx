@@ -1,7 +1,96 @@
 "use client";
 
+// LIBRARIES
+import { useEffect, useRef } from "react";
+import { Canvas as FabricCanvas } from "fabric";
+
+// STORE
+import { useEditorStore } from "@/store";
+
+// FABRIC
+import { initializeFabric } from "@/fabric/fabric-utils";
+
 function Canvas() {
-  return <div>Canvas</div>;
+  const canvasRef = useRef(null);
+  const canvasContainerRef = useRef(null);
+  const fabricCanvasRef = useRef<FabricCanvas | null>(null);
+  const initAttemptedRef = useRef(false);
+
+  const { setCanvas } = useEditorStore();
+
+  useEffect(() => {
+    // CLEANUP CANVAS
+    const cleanupCanvas = () => {
+      if (fabricCanvasRef.current) {
+        try {
+          (fabricCanvasRef.current as any).dispose();
+        } catch (err) {
+          console.error(err, "failed to cleanup canvas");
+        }
+
+        fabricCanvasRef.current = null;
+        setCanvas(null);
+      }
+    };
+
+    cleanupCanvas();
+
+    // RESET INIT FLAG
+    initAttemptedRef.current = false;
+
+    // INIT CANVAS
+    const initCanvas = async () => {
+      if (
+        typeof window === undefined ||
+        !canvasRef.current ||
+        initAttemptedRef.current
+      )
+        return;
+      initAttemptedRef.current = true;
+
+      try {
+        const fabricCanvas = await initializeFabric({
+          canvasEl: canvasRef.current,
+          containerEl: canvasContainerRef.current,
+        });
+
+        if (!fabricCanvas) {
+          console.error("Failed to initialize canvas");
+          return;
+        }
+
+        fabricCanvasRef.current = fabricCanvas;
+
+        // SET CANVAS IN STORE
+        setCanvas(fabricCanvas);
+        console.log("canvas initialized");
+
+        // TODO: APPLY CUSTOM STYLES FOR THE CONTROLS
+
+        // TODO: ADD EVENT LISTENERS FOR THE CANVAS
+      } catch (err) {
+        console.error(err, "Error initializing canvas");
+      }
+    };
+
+    const timer = setTimeout(() => {
+      initCanvas();
+    }, 50);
+
+    return () => {
+      clearTimeout(timer);
+      cleanupCanvas();
+    };
+  }, []);
+
+  return (
+    <div
+      className="relative w-full h-[600px] overflow-auto"
+      ref={canvasContainerRef}
+    >
+      <canvas ref={canvasRef} />
+    </div>
+  );
 }
 
 export default Canvas;

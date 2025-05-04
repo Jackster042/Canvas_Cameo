@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
 // LIBRARIES
 import { useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 // COMPONENTS
@@ -13,6 +13,9 @@ import Sidebar from "./sidebar";
 // STORE
 import { useEditorStore } from "@/store";
 
+// SERVICES
+import { getUserDesignsByID } from "@/services/design-service";
+
 function MainEditor() {
   const params = useParams();
   const router = useRouter();
@@ -20,7 +23,7 @@ function MainEditor() {
 
   const [isLoading, setIsLoading] = useState(!!designId);
   const [loadAttempted, setLoadAttempted] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const { canvas, setDesignId, resetStore } = useEditorStore();
 
@@ -60,6 +63,38 @@ function MainEditor() {
   }, [canvas]);
 
   // LOAD THE DESIGN
+  const loadDesign = useCallback(async () => {
+    if (!canvas || !designId || loadAttempted) return;
+
+    try {
+      setIsLoading(true);
+      setLoadAttempted(true);
+
+      const response = await getUserDesignsByID(designId as string);
+      //   console.log(response, "response from LOAD DESIGN");
+
+      const design = response?.data;
+      if (design) {
+        // TODO: UPDATE NAME
+
+        // SET DESIGN ID JUST IN CASE AFTER LOADING DATA
+        setDesignId(designId as string);
+        // TODO: CONTINUE HERE. . .
+      }
+    } catch (err) {
+      console.error(err, "failed to load design");
+      setError("Failed to load design");
+      setIsLoading(false);
+    }
+  }, [canvas, designId, loadAttempted, setDesignId]);
+
+  useEffect(() => {
+    if (canvas && designId && !loadAttempted) {
+      loadDesign();
+    } else if (!designId) {
+      router.push("/");
+    }
+  }, [canvas, designId, loadAttempted, loadDesign, router]);
 
   return (
     <div className="flex flex-col overflow-hidden h-screen">

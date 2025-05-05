@@ -26,7 +26,7 @@ function RecentDesigns() {
   //     title: `Design${i + 1}`,
   //     thumbnail: "/placeholder-design.svg",
   //   }));
-  console.log(userDesigns, "userDesigns");
+  // console.log(userDesigns, "userDesigns");
   return (
     <>
       <div>

@@ -25,7 +25,7 @@ function MainEditor() {
   const [loadAttempted, setLoadAttempted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { canvas, setDesignId, resetStore } = useEditorStore();
+  const { canvas, setDesignId, resetStore, name, setName } = useEditorStore();
 
   useEffect(() => {
     // reset the store
@@ -76,6 +76,7 @@ function MainEditor() {
       const design = response?.data;
       if (design) {
         // TODO: UPDATE NAME
+        setName(design.name);
 
         // SET DESIGN ID JUST IN CASE AFTER LOADING DATA
         setDesignId(designId as string);

@@ -71,7 +71,7 @@ function MainEditor() {
       setLoadAttempted(true);
 
       const response = await getUserDesignsByID(designId as string);
-      //   console.log(response, "response from LOAD DESIGN");
+      console.log(response, "response from LOAD DESIGN");
 
       const design = response?.data;
       if (design) {
@@ -80,6 +80,61 @@ function MainEditor() {
         // SET DESIGN ID JUST IN CASE AFTER LOADING DATA
         setDesignId(designId as string);
         // TODO: CONTINUE HERE. . .
+        try {
+          if (design.canvasData) {
+            console.log("Canvas data found.");
+
+            canvas.clear();
+            if (design.width && design.height) {
+              canvas.setDimension({
+                width: design.width,
+                height: design.height,
+              });
+            }
+
+            // PARSE THE CANVAS DATA
+            const canvasData =
+              typeof design.canvasData === "string"
+                ? JSON.parse(design.canvasData)
+                : design.canvasData;
+
+            // CHECK IF THERE ARE OBJECTS
+            const hasObjects =
+              canvasData.objects && canvasData.objects.length > 0;
+
+            // CHECK IF THERE IS A BACKGROUND COLOR
+            if (canvasData.background) {
+              canvasData.backgroundCOlor = canvasData.background;
+            } else {
+              canvasData.backgroundColor = "#ffffff";
+            }
+
+            // IF THERE ARE NO OBJECTS, RENDER THE CANVAS
+            if (!hasObjects) {
+              canvas.renderAll();
+              return true;
+            }
+
+            // LOAD THE CANVAS DATA
+            canvas
+              .loadFromJSON(design.canvasData)
+              .then((canvas: any) => canvas.requestRenderAll());
+          } else {
+            console.log("No Canvas data.");
+            console.log("no design found");
+            canvas.clear();
+            canvas.setWidth(design.width);
+            canvas.setHeight(design.height);
+            canvas.backgroundColor = "#ffffff";
+
+            canvas.renderAll();
+          }
+        } catch (err) {
+          console.error(err, "failed to load design");
+          setError("Failed to load design");
+        } finally {
+          setIsLoading(false);
+        }
       }
     } catch (err) {
       console.error(err, "failed to load design");

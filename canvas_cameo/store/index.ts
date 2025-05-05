@@ -9,6 +9,10 @@ type Store = {
   designId: string | null;
   setDesignId: (id: string) => void;
   resetStore: () => void;
+  isEditing: boolean;
+  setIsEditing: (flag: boolean) => void;
+  name: string;
+  setName: (value: string) => void;
 };
 
 export const useEditorStore = create<Store>((set, get) => ({
@@ -19,12 +23,21 @@ export const useEditorStore = create<Store>((set, get) => ({
       centerCanvas(canvas);
     }
   },
+  // DESIGN
   designId: null,
   setDesignId: (id: string) => set({ designId: id }),
+  // EDITING
+  isEditing: true,
+  setIsEditing: (flag: boolean) => set({ isEditing: flag }),
+  // SEARCH / INPUT
+  name: "Untitled Design",
+  setName: (value: string) => set({ name: value }),
   resetStore: () => {
     set({
       canvas: null,
       designId: null,
+      isEditing: true,
+      name: "Untitled Design",
     });
   },
 }));

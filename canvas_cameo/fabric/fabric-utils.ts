@@ -1,6 +1,6 @@
 import { createShape } from "./shapes/shapes-factory";
 import { shapeDefinitions } from "./shapes/shapes-definitions";
-
+import { TextPreset } from "@/config";
 interface InitializeFabricProps {
   canvasEl: any;
   containerEl: any;
@@ -84,5 +84,51 @@ export const addShapeToCanvas = async ({
   } catch (err) {
     console.error(err, "failed to add shape to canvas");
     return;
+  }
+};
+
+interface AddTextToCanvasProps {
+  canvas: any;
+  text: string;
+  options: {};
+  whiteBackground?: boolean;
+  preset?: TextPreset;
+}
+
+export const addTextToCanvas = async ({
+  canvas,
+  text,
+  options,
+  whiteBackground = false,
+}: AddTextToCanvasProps) => {
+  if (!canvas) return;
+
+  try {
+    const { IText } = await import("fabric");
+
+    const defaultProps = {
+      left: 100,
+      right: 100,
+      fontSize: 24,
+      fontFamily: "Arial",
+      fill: "#000000",
+      padding: whiteBackground ? 10 : 0,
+      textAlign: "left",
+      id: `text-${Date.now()}`,
+    };
+
+    const textObj = new IText(text, {
+      ...defaultProps,
+      ...options,
+    });
+
+    canvas.add(textObj);
+    canvas.setActiveObject(textObj);
+    canvas.renderAll();
+
+    return textObj;
+  } catch (err) {
+    console.error(err, "failed to add text to canvas");
+    return null;
   }
 };

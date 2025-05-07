@@ -813,6 +813,10 @@
     scroll-margin-block: calc(var(--spacing) * 1);
   }
 
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -992,10 +996,6 @@
     border-color: var(--color-purple-200);
   }
 
-  .border-purple-600 {
-    border-color: var(--color-purple-600);
-  }
-
   .border-transparent {
     border-color: #0000;
   }
@@ -1173,6 +1173,10 @@
 
   .fill-primary {
     fill: var(--primary);
+  }
+
+  .object-contain {
+    object-fit: contain;
   }
 
   .p-1 {

@@ -84,7 +84,7 @@ function Sidebar() {
 
   return (
     <div className="flex h-full">
-      <aside className="sidebar ">
+      <aside className="sidebar">
         {sidebarItems.map((item) => (
           <div
             key={item.id}
@@ -103,20 +103,20 @@ function Sidebar() {
         <div
           className={`secondary-panel ${isPanelCollapsed ? "collapsed" : ""}`}
           style={{
-            width: isPanelCollapsed ? "0px" : "320px",
+            width: isPanelCollapsed ? "0" : "320px",
             opacity: isPanelCollapsed ? 0 : 1,
             overflow: isPanelCollapsed ? "hidden" : "visible",
           }}
         >
           <div className="panel-header">
             <button className="back-button" onClick={closeSecondaryPanel}>
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="h-5 w-5" />
             </button>
             <span className="panel-title">{activeItem?.label}</span>
           </div>
           <div className="panel-content">{activeItem?.panel()}</div>
           <button className="collapse-button" onClick={togglePanelCollapse}>
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
         </div>
       )}

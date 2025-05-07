@@ -41,14 +41,14 @@ function Sidebar() {
     {
       id: "upload",
       icon: <Upload />,
-      label: "Upload",
+      label: "Uploads",
       panel: () => <UploadPanel />,
     },
     {
-      id: "settings",
-      icon: <Settings />,
-      label: "Settings",
-      panel: () => <SettingsPanel />,
+      id: "draw",
+      icon: <Pencil />,
+      label: "Draw",
+      panel: () => <DrawPanel />,
     },
     {
       id: "ai",
@@ -57,10 +57,10 @@ function Sidebar() {
       panel: () => <AIPanel />,
     },
     {
-      id: "draw",
-      icon: <Pencil />,
-      label: "Draw",
-      panel: () => <DrawPanel />,
+      id: "settings",
+      icon: <Settings />,
+      label: "Settings",
+      panel: () => <SettingsPanel />,
     },
   ];
 

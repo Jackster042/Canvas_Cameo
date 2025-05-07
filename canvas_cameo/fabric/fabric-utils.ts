@@ -1,3 +1,6 @@
+import { createShape } from "./shapes/shapes-factory";
+import { shapeDefinitions } from "./shapes/shapes-definitions";
+
 interface InitializeFabricProps {
   canvasEl: any;
   containerEl: any;
@@ -43,4 +46,43 @@ export const centerCanvas = (canvas: any) => {
   canvasWrapper.style.top = "50%";
   canvasWrapper.style.left = "50%";
   canvasWrapper.style.transform = "translate(-50%, -50%)";
+};
+
+interface AddShapeToCanvasProps {
+  canvas: any;
+  shapeTypes: any;
+  customProps?: Record<string, any>;
+}
+
+export const addShapeToCanvas = async ({
+  canvas,
+  shapeTypes,
+  customProps = {},
+}: AddShapeToCanvasProps) => {
+  if (!canvas) return;
+
+  try {
+    const fabricModule = await import("fabric");
+    const shape = createShape({
+      fabric: fabricModule,
+      type: shapeTypes,
+      shapeDefinitions,
+      customProps: {
+        left: 100,
+        right: 100,
+        ...customProps,
+      },
+    });
+
+    if (shape) {
+      shape.id = `${shapeTypes}-${Date.now()}`;
+      canvas.add(shape);
+      canvas.renderAll();
+      canvas.setActiveObject(shape);
+      return shape;
+    }
+  } catch (err) {
+    console.error(err, "failed to add shape to canvas");
+    return;
+  }
 };

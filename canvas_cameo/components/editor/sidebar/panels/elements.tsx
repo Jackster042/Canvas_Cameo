@@ -7,6 +7,7 @@ import {
   shapeTypes,
 } from "@/fabric/shapes/shapes-definitions";
 import { StaticCanvas } from "fabric";
+import { addShapeToCanvas } from "@/fabric/fabric-utils";
 
 function ElementsPanel() {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -87,6 +88,13 @@ function ElementsPanel() {
     }
   };
 
+  const handleShapeClick = (shapeType: string) => {
+    addShapeToCanvas({
+      canvas,
+      shapeTypes: shapeType,
+    });
+  };
+
   return (
     <div className="h-full overflow-y-auto">
       <div className="p-4">
@@ -96,6 +104,7 @@ function ElementsPanel() {
               style={{ height: "90px" }}
               className="cursor-pointer flex flex-col items-center justify-center"
               key={shapeType}
+              onClick={() => handleShapeClick(shapeType)}
             >
               <canvas
                 width="100"

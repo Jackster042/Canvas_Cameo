@@ -1269,10 +1269,6 @@
     fill: var(--primary);
   }
 
-  .object-contain {
-    object-fit: contain;
-  }
-
   .p-1 {
     padding: calc(var(--spacing) * 1);
   }

@@ -6,6 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { brushSizes, drawingPanelColorPresets } from "@/config";
+import {
+  toggleDrawingMode,
+  toggleEraseMode,
+  updateDrawingBrush,
+} from "@/fabric/fabric-utils";
 import { useEditorStore } from "@/store";
 import {
   EraserIcon,
@@ -39,26 +44,66 @@ function DrawPanel() {
 
     const newMode = !isDrawing;
     setIsDrawing(newMode);
-    setIsErasing(false);
-    setActiveTab("colors");
+
+    if (newMode && isErasing) {
+      setIsErasing(false);
+    }
+
+    // INITIALIZE DRAWING MODE
+    toggleDrawingMode({
+      canvas,
+      isDrawingMode: newMode,
+      drawingColor,
+      brushWidth,
+    });
   };
 
   const handleDrawingColorChange = (color: string) => {
     setDrawingColor(color);
+
+    if (canvas && isDrawing && !isErasing) {
+      updateDrawingBrush({
+        canvas,
+        properties: { color },
+      });
+    }
   };
 
   const handleBrushWidthChange = (width: number) => {
     setBrushWidth(width);
+
+    if (canvas && isDrawing) {
+      updateDrawingBrush({
+        canvas,
+        properties: { width: isErasing ? width * 2 : width },
+      });
+    }
   };
 
   const handleDrawingOpacityChange = (value: number) => {
     const opacityValue = Number(value);
     setDrawingOpacity(opacityValue);
+
+    if (canvas && isDrawing) {
+      updateDrawingBrush({
+        canvas,
+        properties: { opacity: opacityValue / 100 },
+      });
+    }
   };
 
   const handleToggleErasing = () => {
+    if (!canvas && !isDrawing) return;
+
     const erasingMode = !isErasing;
     setIsErasing(erasingMode);
+
+    toggleEraseMode({
+      canvas,
+      isErasing: erasingMode,
+      previousColor: drawingColor,
+      eraseWidth: brushWidth * 2,
+    });
   };
 
   return (
@@ -120,6 +165,7 @@ function DrawPanel() {
                             ? "ring-1 ring-offset-2 ring-primary"
                             : ""
                         }`}
+                        onClick={() => handleDrawingColorChange(color)}
                         style={{ backgroundColor: color }}
                       />
                     </div>

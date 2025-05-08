@@ -132,3 +132,99 @@ export const addTextToCanvas = async ({
     return null;
   }
 };
+
+interface ToggleDrawingModeProps {
+  canvas: any;
+  isDrawingMode: boolean;
+  drawingColor?: string;
+  brushWidth: number;
+}
+
+export const toggleDrawingMode = ({
+  canvas,
+  isDrawingMode,
+  drawingColor = "#000000",
+  brushWidth = 5,
+}: ToggleDrawingModeProps) => {
+  if (!canvas) return;
+
+  try {
+    canvas.isDrawingMode = isDrawingMode;
+    if (isDrawingMode) {
+      canvas.freeDrawingBrush.color = drawingColor;
+      canvas.freeDrawingBrush.width = brushWidth;
+    }
+
+    return true;
+  } catch (err) {
+    console.error(err, "failed to toggle drawing mode");
+    return false;
+  }
+};
+
+interface ToggleEraseModeProps {
+  canvas: any;
+  isErasing: boolean;
+  previousColor?: string;
+  eraseWidth?: number;
+}
+
+export const toggleEraseMode = ({
+  canvas,
+  isErasing,
+  previousColor = "#000000",
+  eraseWidth = 20,
+}: ToggleEraseModeProps) => {
+  if (!canvas || !canvas.freeDrawingBrush) return false;
+
+  try {
+    if (isErasing) {
+      canvas.freeDrawingBrush.color = "#ffffff";
+      canvas.freeDrawingBrush.width = eraseWidth;
+    } else {
+      canvas.freeDrawingBrush.color = previousColor;
+      canvas.freeDrawingBrush.width = 5;
+    }
+
+    return true;
+  } catch (err) {
+    console.error(err, "failed to toggle erase mode");
+    return false;
+  }
+};
+
+interface UpdateDrawingBrushProps {
+  canvas: any;
+  properties: {
+    color?: string;
+    width?: number;
+    opacity?: number;
+  };
+}
+
+export const updateDrawingBrush = ({
+  canvas,
+  properties,
+}: UpdateDrawingBrushProps) => {
+  if (!canvas || !canvas.freeDrawingBrush) return false;
+
+  try {
+    const { color, width, opacity } = properties;
+
+    if (color !== undefined) {
+      canvas.freeDrawingBrush.color = color;
+    }
+
+    if (width !== undefined) {
+      canvas.freeDrawingBrush.width = width;
+    }
+
+    if (opacity !== undefined) {
+      canvas.freeDrawingBrush.opacity = opacity;
+    }
+    return true;
+  } catch (err) {
+    console.error(err, "failed to update drawing brush");
+    return false;
+  }
+};

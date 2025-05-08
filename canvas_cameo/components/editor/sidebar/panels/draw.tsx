@@ -35,13 +35,13 @@ function DrawPanel() {
   const { canvas } = useEditorStore();
 
   const handleToggleDrawingMode = () => {
+    if (!canvas) return;
+
     const newMode = !isDrawing;
     setIsDrawing(newMode);
     setIsErasing(false);
     setActiveTab("colors");
   };
-
-  const handleSetDrawingColor = (color: string) => {};
 
   const handleDrawingColorChange = (color: string) => {
     setDrawingColor(color);

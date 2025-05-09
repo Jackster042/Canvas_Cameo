@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
-// const mediaRoutes = require("./routes/upload-routes");
+const mediaRoutes = require("./routes/upload-routes");
 
 const app = express();
 const PORT = process.env.PORT || 5002;
@@ -18,7 +18,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use("/api/media", mediaRoutes);
+app.use("/api/media", mediaRoutes);
 
 async function startServer() {
   try {

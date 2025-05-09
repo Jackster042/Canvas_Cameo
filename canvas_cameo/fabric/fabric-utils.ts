@@ -5,7 +5,7 @@ interface InitializeFabricProps {
   canvasEl: any;
   containerEl: any;
 }
-``;
+
 export const initializeFabric = async ({
   canvasEl,
   containerEl,

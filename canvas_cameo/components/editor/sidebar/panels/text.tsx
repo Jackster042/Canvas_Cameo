@@ -34,7 +34,7 @@ function TextPanel() {
       <div className="p-4 space-y-auto">
         <Button
           onClick={handleAddCustomTextBox}
-          className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md flex items-center justify-center transition-colors"
+          className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md flex items-center justify-center transition-colors cursor-pointer"
         >
           <Type className="w-4 h-4 mr-5" />
           <span className="font-medium">Add a text box</span>
@@ -48,7 +48,7 @@ function TextPanel() {
           {textPresets.map((preset, index) => (
             <button
               key={index}
-              className="w-full text-left p-3 bg-white border border-gray-200 rounded-md hover:b-gray-50 transition-colors"
+              className="w-full text-left p-3 bg-white border border-gray-200 rounded-md hover:b-gray-50 transition-colors cursor-pointer"
               style={{
                 fontSize: `${Math.min(preset.fontSize / 1.8, 24)}px`,
                 fontWeight: preset.fontWeight,

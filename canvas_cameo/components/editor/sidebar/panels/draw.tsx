@@ -111,7 +111,7 @@ function DrawPanel() {
       <div className="space-y-4">
         <Button
           variant={isDrawing ? "default" : "outline"}
-          className="w-full group py-6 transition-all"
+          className="w-full group py-6 transition-all cursor-pointer"
           onClick={handleToggleDrawingMode}
         >
           <PencilIcon

@@ -16,7 +16,7 @@ export async function uploadFileWithAuth(file: File, metaData = {}) {
   });
 
   try {
-    const response = await axios.post(`${API_URL}/api/media/upload`, formData, {
+    const response = await axios.post(`${API_URL}/v1/media/upload`, formData, {
       headers: {
         Authorization: `Bearer ${session.idToken}`,
         "Content-Type": "multipart/form-data",
@@ -30,21 +30,21 @@ export async function uploadFileWithAuth(file: File, metaData = {}) {
   }
 }
 
-export async function getAllUserMedia() {
-  const session = await getSession();
-  console.log(session, "Session from getAllUserMedia");
-  if (!session) throw new Error("Unauthorized access");
+// export async function getAllUserMedia() {
+//   const session = await getSession();
+//   console.log(session, "Session from getAllUserMedia");
+//   if (!session) throw new Error("Unauthorized access");
 
-  try {
-    const response = await axios.get(`${API_URL}/api/media/get`, {
-      headers: {
-        Authorization: `Bearer ${session.idToken}`,
-      },
-    });
-    console.log(response, "Response from getAllUserMedia");
-    return response.data;
-  } catch (err) {
-    console.error(err, "Error from getAllUserMedia");
-    throw new Error("Error from getAllUserMedia");
-  }
-}
+//   try {
+//     const response = await axios.get(`${API_URL}/api/media/get`, {
+//       headers: {
+//         Authorization: `Bearer ${session.idToken}`,
+//       },
+//     });
+//     console.log(response, "Response from getAllUserMedia");
+//     return response.data;
+//   } catch (err) {
+//     console.error(err, "Error from getAllUserMedia");
+//     throw new Error("Error from getAllUserMedia");
+//   }
+// }

@@ -16,6 +16,7 @@ import { Loader2, Upload } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { uploadFileWithAuth } from "@/services/uplaod-service";
+import { addImageToCanvas } from "@/fabric/fabric-utils";
 
 function UploadPanel() {
   const [isUploading, setIsUploading] = useState(false);
@@ -67,6 +68,12 @@ function UploadPanel() {
 
   console.log(userUploads, "userUploads from UploadPanel");
 
+  const handleAddImage = async (imageUrl: string) => {
+    if (!canvas) return;
+
+    addImageToCanvas({ canvas, imageUrl });
+  };
+
   // FETCH USER UPLOADS
   useEffect(() => {
     if (status === "authenticated") {
@@ -109,6 +116,7 @@ function UploadPanel() {
                 <div
                   key={imageData._id}
                   className="aspect-auto bg-gray-50 rounded-md overflow-hidden hover:opacity-85 transition-opacity relative group"
+                  onClick={() => handleAddImage(imageData.url)}
                 >
                   <img
                     src={imageData.url}

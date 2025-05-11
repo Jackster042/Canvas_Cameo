@@ -1,11 +1,56 @@
 import { createShape } from "./shapes/shapes-factory";
 import { shapeDefinitions } from "./shapes/shapes-definitions";
 import { TextPreset } from "@/config";
+
+// INTERFACE
 interface InitializeFabricProps {
   canvasEl: any;
   containerEl: any;
 }
 
+interface AddShapeToCanvasProps {
+  canvas: any;
+  shapeTypes: any;
+  customProps?: Record<string, any>;
+}
+
+interface AddTextToCanvasProps {
+  canvas: any;
+  text: string;
+  options: {};
+  whiteBackground?: boolean;
+  preset?: TextPreset;
+}
+
+interface ToggleDrawingModeProps {
+  canvas: any;
+  isDrawingMode: boolean;
+  drawingColor?: string;
+  brushWidth: number;
+}
+
+interface ToggleEraseModeProps {
+  canvas: any;
+  isErasing: boolean;
+  previousColor?: string;
+  eraseWidth?: number;
+}
+
+interface UpdateDrawingBrushProps {
+  canvas: any;
+  properties: {
+    color?: string;
+    width?: number;
+    opacity?: number;
+  };
+}
+
+interface AddImageToCanvasProps {
+  canvas: any;
+  imageUrl: string;
+}
+
+// FUNCTIONS
 export const initializeFabric = async ({
   canvasEl,
   containerEl,
@@ -48,12 +93,6 @@ export const centerCanvas = (canvas: any) => {
   canvasWrapper.style.transform = "translate(-50%, -50%)";
 };
 
-interface AddShapeToCanvasProps {
-  canvas: any;
-  shapeTypes: any;
-  customProps?: Record<string, any>;
-}
-
 export const addShapeToCanvas = async ({
   canvas,
   shapeTypes,
@@ -86,14 +125,6 @@ export const addShapeToCanvas = async ({
     return;
   }
 };
-
-interface AddTextToCanvasProps {
-  canvas: any;
-  text: string;
-  options: {};
-  whiteBackground?: boolean;
-  preset?: TextPreset;
-}
 
 export const addTextToCanvas = async ({
   canvas,
@@ -133,13 +164,6 @@ export const addTextToCanvas = async ({
   }
 };
 
-interface ToggleDrawingModeProps {
-  canvas: any;
-  isDrawingMode: boolean;
-  drawingColor?: string;
-  brushWidth: number;
-}
-
 export const toggleDrawingMode = ({
   canvas,
   isDrawingMode,
@@ -161,13 +185,6 @@ export const toggleDrawingMode = ({
     return false;
   }
 };
-
-interface ToggleEraseModeProps {
-  canvas: any;
-  isErasing: boolean;
-  previousColor?: string;
-  eraseWidth?: number;
-}
 
 export const toggleEraseMode = ({
   canvas,
@@ -193,15 +210,6 @@ export const toggleEraseMode = ({
   }
 };
 
-interface UpdateDrawingBrushProps {
-  canvas: any;
-  properties: {
-    color?: string;
-    width?: number;
-    opacity?: number;
-  };
-}
-
 export const updateDrawingBrush = ({
   canvas,
   properties,
@@ -226,5 +234,58 @@ export const updateDrawingBrush = ({
   } catch (err) {
     console.error(err, "failed to update drawing brush");
     return false;
+  }
+};
+
+export const addImageToCanvas = async ({
+  canvas,
+  imageUrl,
+}: AddImageToCanvasProps) => {
+  if (!canvas) return;
+
+  try {
+    const { Image: FabricImage } = await import("fabric");
+
+    // CREATE IMAGE OBJECT
+    let imageObject = new Image();
+    imageObject.crossOrigin = "Anonymous";
+    imageObject.src = imageUrl;
+
+    return new Promise((resolve, reject) => {
+      imageObject.onload = () => {
+        let image = new FabricImage(imageObject);
+        image.set({
+          id: `image-${Date.now()}`,
+          top: 100,
+          left: 100,
+          padding: 10,
+          cornerSize: 10,
+        });
+
+        const maxDimension = 400;
+
+        if (image.width > maxDimension || image.height > maxDimension) {
+          if (image.width > image.height) {
+            const scale = maxDimension / image.width;
+            image.scale(scale);
+          } else {
+            const scale = maxDimension / image.height;
+            image.scale(scale);
+          }
+        }
+
+        canvas.add(image);
+        canvas.renderAll();
+        canvas.setActiveObject(image);
+        resolve(image);
+      };
+
+      imageObject.onerror = () => {
+        reject(new Error("Failed to load image", { cause: imageUrl }));
+      };
+    });
+  } catch (err) {
+    console.error(err, "failed to add image to canvas");
+    return null; // TODO : DIFF BETWEEN NULL AND FALSE RETURN
   }
 };

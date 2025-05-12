@@ -21,11 +21,6 @@ const upload = multer({
 
 router.get("/get", authenticatedRequest, getAllMediaByUser);
 router.post(
-  "/ai-image-generated",
-  authenticatedRequest,
-  generateImageFromAIAndUploadToDb
-);
-router.post(
   "/upload",
   authenticatedRequest,
   (req, res, next) => {
@@ -51,6 +46,11 @@ router.post(
     });
   },
   uploadMedia
+);
+router.post(
+  "/ai-image-generate",
+  authenticatedRequest,
+  generateImageFromAIAndUploadToDb
 );
 
 module.exports = router;

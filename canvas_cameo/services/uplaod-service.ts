@@ -30,21 +30,22 @@ export async function uploadFileWithAuth(file: File, metaData = {}) {
   }
 }
 
-// export async function getAllUserMedia() {
-//   const session = await getSession();
-//   console.log(session, "Session from getAllUserMedia");
-//   if (!session) throw new Error("Unauthorized access");
+export async function generateImageFromAI(prompt: any) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized access");
 
-//   try {
-//     const response = await axios.get(`${API_URL}/api/media/get`, {
-//       headers: {
-//         Authorization: `Bearer ${session.idToken}`,
-//       },
-//     });
-//     console.log(response, "Response from getAllUserMedia");
-//     return response.data;
-//   } catch (err) {
-//     console.error(err, "Error from getAllUserMedia");
-//     throw new Error("Error from getAllUserMedia");
-//   }
-// }
+  try {
+    const response = await fetchWithAuth(`/v1/media/ai-image-generate`, {
+      method: "POST",
+      body: JSON.stringify({ prompt }),
+      headers: {
+        "Content-Type": "application/json", // ✅ This is critical
+      },
+    });
+
+    return response;
+  } catch (err) {
+    console.error(err, "Error from generateImageFromAI");
+    throw new Error("Error from generateImageFromAI");
+  }
+}

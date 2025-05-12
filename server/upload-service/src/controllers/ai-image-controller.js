@@ -8,14 +8,20 @@ const STABILITY_ENGINE_ID = "stable-diffusion-v1-6";
 const STABILITY_API_HOST = "https://api.stability.ai";
 
 const generateImageFromAIAndUploadToDb = async (req, res) => {
-  const prompt = req.body.prompt;
-  const userId = req.body.userId;
+  const { prompt, userId } = req.body;
+
+  console.log("Raw req.body:", req.body);
+  console.log("typeof req.body:", typeof req.body);
 
   try {
     const response = await axios.post(
       `${STABILITY_API_HOST}/v1/generation/${STABILITY_ENGINE_ID}/text-to-image`,
       {
-        text_prompts: [{ text: prompt }],
+        text_prompts: [
+          {
+            text: prompt,
+          },
+        ],
         height: 1024,
         width: 1024,
         steps: 30,
@@ -35,6 +41,7 @@ const generateImageFromAIAndUploadToDb = async (req, res) => {
     if (!generatedImage) throw new Error("No image generated");
 
     const imageBuffer = Buffer.from(generatedImage.base64, "base64");
+    console.log(imageBuffer, "Image Buffer");
 
     const file = {
       buffer: imageBuffer,
@@ -46,9 +53,9 @@ const generateImageFromAIAndUploadToDb = async (req, res) => {
     };
 
     const cloudinaryResult = await uploadMediaToCloudinary(file);
-    const newlyCreatedMedia = {
+    const newlyCreatedMedia = new MediaModel({
       userId,
-      name: `AI GeneratedImage - ${(prompt.substring, 10)}${
+      name: `AI GeneratedImage - ${prompt.substring(0, 50)}${
         prompt.length > 50 ? "..." : ""
       }`,
       cloudinaryId: cloudinaryResult.public_id,
@@ -57,19 +64,19 @@ const generateImageFromAIAndUploadToDb = async (req, res) => {
       size: imageBuffer.length,
       height: 1024,
       width: 1024,
-    };
+    });
 
-    await MediaModel.create(newlyCreatedMedia);
+    await newlyCreatedMedia.save();
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
-      message: "AI Generated Image Generated and Uploaded Successfully",
       data: newlyCreatedMedia,
       prompt,
       seed: generatedImage.seed,
+      message: "AI Generated Image Generated and Uploaded Successfully",
     });
   } catch (err) {
-    console.error(err, "Error from generateImageFromAIAndUploadToDb");
+    // console.error(err, "Error from generateImageFromAIAndUploadToDb");
     return res.status(500).json({
       success: false,
       message: "Error Generating AI Image",

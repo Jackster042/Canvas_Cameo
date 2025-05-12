@@ -36,15 +36,21 @@ app.use(
 );
 
 app.use(
-  "/v1/media",
+  "/v1/media/upload",
   authMiddleware,
-  proxy(process.env.UPLOAD, { ...proxyOptions, parseReqBody: false })
+  proxy(process.env.UPLOAD, {
+    ...proxyOptions,
+    parseReqBody: false,
+  })
 );
 
 app.use(
-  "/v1/media/upload",
+  "/v1/media",
   authMiddleware,
-  proxy(process.env.UPLOAD, { ...proxyOptions, parseReqBody: false })
+  proxy(process.env.UPLOAD, {
+    ...proxyOptions,
+    parseReqBody: true,
+  })
 );
 
 // TODO: SUBSCRIPTION SERVICE LATER

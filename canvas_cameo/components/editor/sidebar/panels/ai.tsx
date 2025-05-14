@@ -6,13 +6,14 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { generateImageFromAI } from "@/services/uplaod-service";
+import { addImageToCanvas } from "@/fabric/fabric-utils";
 
 function AIPanel() {
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [generatedContent, setGeneratedContent] = useState(null);
+  const [generatedContent, setGeneratedContent] = useState(null as any);
 
   const { canvas } = useEditorStore();
 
@@ -38,13 +39,21 @@ function AIPanel() {
     try {
       const response = await generateImageFromAI(prompt);
       console.log(response, "response from generateImage");
+
+      if (response && response?.data?.url)
+        setGeneratedContent(response?.data?.url);
     } catch (err) {
       console.error(err, "Error from generateImage");
       throw new Error("Error from generateImage");
     }
   };
 
-  const handleAiImageToCanvas = () => {};
+  const handleAiImageToCanvas = async () => {
+    if (!canvas && !generatedContent) return;
+    addImageToCanvas({ canvas, imageUrl: generatedContent });
+  };
+
+  // console.log(generatedContent, "generatedContent");
 
   return (
     <div className="h-full overflow-y-auto">

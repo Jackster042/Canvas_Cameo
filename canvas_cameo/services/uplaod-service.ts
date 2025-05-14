@@ -23,6 +23,8 @@ export async function uploadFileWithAuth(file: File, metaData = {}) {
       },
     });
 
+    console.log(response, "response from uploadFileWithAuth");
+
     return response.data;
   } catch (err) {
     console.error(err, "Error from uploadFileWithAuth");

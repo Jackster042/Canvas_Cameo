@@ -8,10 +8,8 @@ const STABILITY_ENGINE_ID = "stable-diffusion-v1-6";
 const STABILITY_API_HOST = "https://api.stability.ai";
 
 const generateImageFromAIAndUploadToDb = async (req, res) => {
-  const { prompt, userId } = req.body;
-
-  console.log("Raw req.body:", req.body);
-  console.log("typeof req.body:", typeof req.body);
+  const prompt = req.body.prompt;
+  const userId = req.user.userId;
 
   try {
     const response = await axios.post(
@@ -76,7 +74,7 @@ const generateImageFromAIAndUploadToDb = async (req, res) => {
       message: "AI Generated Image Generated and Uploaded Successfully",
     });
   } catch (err) {
-    // console.error(err, "Error from generateImageFromAIAndUploadToDb");
+    console.error(err, "Error from generateImageFromAIAndUploadToDb");
     return res.status(500).json({
       success: false,
       message: "Error Generating AI Image",

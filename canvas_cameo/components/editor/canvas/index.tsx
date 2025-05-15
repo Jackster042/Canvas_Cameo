@@ -22,6 +22,16 @@ function Canvas() {
     // CLEANUP CANVAS
     const cleanupCanvas = () => {
       if (fabricCanvasRef.current) {
+        // REMOVE EVENT LISTENERS
+        try {
+          fabricCanvasRef?.current?.off("object:added");
+          fabricCanvasRef?.current?.off("object:modified");
+          fabricCanvasRef?.current?.off("object:removed");
+          fabricCanvasRef.current?.off("path:created");
+        } catch (err) {
+          console.error(err, "failed to remove event listeners");
+        }
+
         try {
           (fabricCanvasRef.current as any).dispose();
         } catch (err) {
@@ -68,6 +78,16 @@ function Canvas() {
         // TODO: APPLY CUSTOM STYLES FOR THE CONTROLS
 
         // TODO: ADD EVENT LISTENERS FOR THE CANVAS
+
+        // IMPLEMENT AUTO-SAVE FEATURE AND SAVE UPDATED CANVAS
+        const handleCanvasChange = () => {
+          console.log("canvas changed || path changed");
+        };
+
+        fabricCanvas.on("object:added", handleCanvasChange);
+        fabricCanvas.on("object:modified", handleCanvasChange);
+        fabricCanvas.on("object:removed", handleCanvasChange);
+        fabricCanvas.on("path:created", handleCanvasChange);
       } catch (err) {
         console.error(err, "Error initializing canvas");
       }

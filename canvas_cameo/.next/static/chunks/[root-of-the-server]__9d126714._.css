@@ -513,10 +513,6 @@
     bottom: 0;
   }
 
-  .bottom-\[48px\] {
-    bottom: 48px;
-  }
-
   .left-0 {
     left: calc(var(--spacing) * 0);
   }

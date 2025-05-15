@@ -15,6 +15,7 @@ import { useEditorStore } from "@/store";
 
 // SERVICES
 import { getUserDesignsByID } from "@/services/design-service";
+import Properties from "./properties";
 
 function MainEditor() {
   const params = useParams();
@@ -25,7 +26,16 @@ function MainEditor() {
   const [loadAttempted, setLoadAttempted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { canvas, setDesignId, resetStore, name, setName } = useEditorStore();
+  const {
+    canvas,
+    setDesignId,
+    resetStore,
+    name,
+    setName,
+    setShowProperties,
+    showProperties,
+    isEditing,
+  } = useEditorStore();
 
   useEffect(() => {
     // reset the store
@@ -152,17 +162,47 @@ function MainEditor() {
     }
   }, [canvas, designId, loadAttempted, loadDesign, router]);
 
+  // ACTIVE SELECTION PROPERTY
+  useEffect(() => {
+    if (!canvas) return;
+    const handleSelectionCreated = () => {
+      const activeObject = canvas.getActiveObject();
+      console.log(activeObject, "active object");
+
+      if (activeObject) {
+        setShowProperties(true);
+      }
+    };
+
+    const handleSelectionCleared = () => {
+      console.log("selection cleared");
+      setShowProperties(false);
+    };
+
+    canvas.on("selection:created", handleSelectionCreated);
+    canvas.on("selection:updated", handleSelectionCreated);
+    canvas.on("selection:cleared", handleSelectionCleared);
+
+    return () => {
+      canvas.off("selection:created", handleSelectionCreated);
+      canvas.off("selection:updated", handleSelectionCreated);
+      canvas.off("selection:cleared", handleSelectionCleared);
+    };
+  }, [canvas]);
+
   return (
     <div className="flex flex-col overflow-hidden h-screen">
       <Header />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+        {isEditing && <Sidebar />}
         <div className="flex flex-1 overflow-hidden relative">
           <main className="flex flex-1 justify-center items-center overflow-hidden bg-[#f0f0f0]">
             <Canvas />
           </main>
         </div>
       </div>
+      {/* PROPERTIES */}
+      {showProperties && isEditing && <Properties />}
     </div>
   );
 }

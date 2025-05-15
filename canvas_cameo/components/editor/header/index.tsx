@@ -13,14 +13,24 @@ import { useEditorStore } from "@/store";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 function Header() {
-  const { isEditing, setIsEditing, name, setName } = useEditorStore();
+  const { isEditing, setIsEditing, name, setName, canvas } = useEditorStore();
   const { data: session } = useSession();
 
   const handleLogout = async () => {
     await signOut();
   };
+
+  useEffect(() => {
+    if (!canvas) return;
+    canvas.selection = isEditing;
+    canvas.getObjects().forEach((obj: any) => {
+      obj.selectable = isEditing;
+      obj.evented = isEditing;
+    });
+  }, [isEditing]);
 
   return (
     <header className="header-gradient header flex items-center justify-between px-4 h-14">

@@ -493,6 +493,10 @@
     top: 50%;
   }
 
+  .top-\[56px\] {
+    top: 56px;
+  }
+
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
@@ -503,6 +507,14 @@
 
   .right-4 {
     right: calc(var(--spacing) * 4);
+  }
+
+  .bottom-\[0px\] {
+    bottom: 0;
+  }
+
+  .bottom-\[48px\] {
+    bottom: 48px;
   }
 
   .left-0 {
@@ -834,6 +846,10 @@
 
   .w-\[72px\] {
     width: 72px;
+  }
+
+  .w-\[280px\] {
+    width: 280px;
   }
 
   .w-fit {

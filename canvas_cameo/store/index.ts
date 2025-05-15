@@ -13,6 +13,8 @@ type Store = {
   setIsEditing: (flag: boolean) => void;
   name: string;
   setName: (value: string) => void;
+  showProperties: boolean;
+  setShowProperties: (flag: boolean) => void;
 };
 
 export const useEditorStore = create<Store>((set, get) => ({
@@ -32,12 +34,18 @@ export const useEditorStore = create<Store>((set, get) => ({
   // SEARCH / INPUT
   name: "Untitled Design",
   setName: (value: string) => set({ name: value }),
+  // PROPERTIES
+  showProperties: false,
+  setShowProperties: (flag: boolean) => set({ showProperties: flag }),
+  // CLEANUP
   resetStore: () => {
     set({
       canvas: null,
       designId: null,
       isEditing: true,
       name: "Untitled Design",
+      showProperties: false,
+      setShowProperties: (flag: boolean) => set({ showProperties: flag }),
     });
   },
 }));

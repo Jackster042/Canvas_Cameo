@@ -5,6 +5,19 @@ import { useEditorStore } from "@/store";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { FabricObject } from "fabric";
+import { Button } from "@/components/ui/button";
+import {
+  Copy,
+  FlipHorizontal,
+  FlipVertical,
+  MoveDown,
+  MoveUp,
+  Trash,
+} from "lucide-react";
+import {
+  cloneSelectedObject,
+  deleteSelectedObject,
+} from "@/fabric/fabric-utils";
 
 function Properties() {
   const { canvas } = useEditorStore();
@@ -22,6 +35,15 @@ function Properties() {
   const [height, setHeight] = useState(0);
 
   //  TEXT
+  const [text, setText] = useState<string>("");
+  const [fontSize, setFontSize] = useState<number>(24);
+  const [fontFamily, setFontFamily] = useState<string>("Arial");
+  const [fontWeight, setFontWeight] = useState<string>("normal");
+  const [fontStyle, setFontStyle] = useState<string>("normal");
+  const [underline, setUnderline] = useState<boolean>(false);
+  const [textColor, setTextColor] = useState<string>("#000000");
+  const [textBackgroundColor, setTextBackgroundColor] = useState<string>("");
+  const [letterSpacing, setLetterSpacing] = useState<number>(0);
 
   // SHAPES
 
@@ -46,6 +68,35 @@ function Properties() {
     updateObjectProperty("opacity", newValue / 100);
   };
 
+  // DUPLICATE
+  const handleDuplicate = async () => {
+    if (!canvas || !selectedObject) return;
+    await cloneSelectedObject(canvas);
+  };
+
+  // DELETE
+  const handleDelete = () => {
+    if (!canvas || !selectedObject) return;
+    deleteSelectedObject(canvas);
+  };
+
+  // TEXT HANDLERS
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const handleFontFamilyChange = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const handleToggleBold = () => {};
+  const handleToggleItalic = () => {};
+  const handleToggleUnderline = () => {};
+  const handleToggleTextColorChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {};
+  const handleToggleTextBackgroundColorChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {};
+  const handleLetterSpacingChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {};
+
   useEffect(() => {
     if (!canvas) return;
 
@@ -53,13 +104,12 @@ function Properties() {
       const activeObject = canvas.getActiveObject();
       if (activeObject) {
         setSelectedObject(activeObject);
+        // console.log(activeObject, "active object");
+        // UPDATE COMMON PROPERTIES
+        setOpacity(Math.round(activeObject?.opacity! * 100) || 100);
+        setWidth(Math.round(activeObject.width * activeObject.scaleX));
+        setHeight(Math.round(activeObject.height * activeObject.scaleY));
       }
-      // console.log(activeObject, "active object");
-
-      setOpacity(Math.round(activeObject?.opacity! * 100) || 100);
-      setWidth(Math.round(activeObject.width * activeObject.scaleX));
-      setHeight(Math.round(activeObject.height * activeObject.scaleY));
-      // UPDATE COMMON PROPERTIES
     };
     const handleSelectionCleared = () => {};
 
@@ -124,6 +174,55 @@ function Properties() {
             value={[opacity]}
             onValueChange={handleOpacityChange} // excepts a function that takes an array of numbers as an argument
           />
+        </div>
+        {/* FLIP HORIZONTAL AND VERTICAL */}
+        <div className="flex flex-wrap gap-2">
+          <Button variant={"outline"} size="sm" className={"h-8 text-sm"}>
+            <FlipHorizontal className="w-4 h-4 mr-1" />
+            Flip - H
+          </Button>
+          <Button variant={"outline"} size="sm" className={"h-8 text-sm"}>
+            <FlipVertical className="w-4 h-4 mr-1" />
+            Flip - H
+          </Button>
+        </div>
+        {/* ARRANGEMENT */}
+        <div className="space-y-4 pt-4 border-t">
+          <h3 className="text-sm font-medium">Layer Position</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant={"outline"} size="sm" className={"h-8 text-xs"}>
+              <MoveUp className="w-4 h-4" />
+              <span>Bring To Front</span>
+            </Button>
+            <Button variant={"outline"} size="sm" className={"h-8 text-xs"}>
+              <MoveDown className="w-4 h-4" />
+              <span>Send To Back</span>
+            </Button>
+          </div>
+        </div>
+        {/* DUPLICATE AND DELETE */}
+        <div className="space-y-4 pt-4 border-t">
+          <h3 className="text-sm font-medium">Duplicate and Delete</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              onClick={handleDuplicate}
+              variant={"default"}
+              size="sm"
+              className={"h-8 text-xs"}
+            >
+              <Copy className="w-4 h-4" />
+              <span>Duplicate</span>
+            </Button>
+            <Button
+              onClick={handleDelete}
+              variant={"destructive"}
+              size="sm"
+              className={"h-8 text-xs"}
+            >
+              <Trash className="w-4 h-4" />
+              <span>Delete</span>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

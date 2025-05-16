@@ -50,6 +50,13 @@ interface AddImageToCanvasProps {
   imageUrl: string;
 }
 
+// interface CloneSelectedObjectProps {
+//   canvas: any;
+//   getActiveObject?: () => any;
+//   add?: (object: any) => void;
+//   renderAll?: () => void;
+// }
+
 // FUNCTIONS
 export const initializeFabric = async ({
   canvasEl,
@@ -287,5 +294,48 @@ export const addImageToCanvas = async ({
   } catch (err) {
     console.error(err, "failed to add image to canvas");
     return null; // TODO : DIFF BETWEEN NULL AND FALSE RETURN
+  }
+};
+
+export const cloneSelectedObject = async (canvas: any) => {
+  // TODO: CHECK TYPES FOR THIS FUNCTION
+  if (!canvas) return;
+
+  const activeObject = canvas.getActiveObject();
+  if (!activeObject) return;
+
+  try {
+    const cloneObject = await activeObject.clone();
+    cloneObject.set({
+      id: `${activeObject.id || "object"}-${Date.now()}`,
+      top: activeObject.top + 10,
+      left: activeObject.left + 10,
+    });
+
+    canvas.add(cloneObject);
+    canvas.renderAll();
+
+    return cloneObject;
+  } catch (err) {
+    console.error(err, "failed to clone selected object");
+    return null;
+  }
+};
+
+export const deleteSelectedObject = async (canvas: any) => {
+  if (!canvas) return;
+
+  const activeObject = canvas.getActiveObject();
+  if (!activeObject) return;
+
+  try {
+    canvas.remove(activeObject);
+    canvas.discardActiveObject();
+    canvas.renderAll();
+
+    return true;
+  } catch (err) {
+    console.error(err, "failed to delete selected object");
+    return null;
   }
 };

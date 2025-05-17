@@ -53,7 +53,7 @@ function Properties() {
 
   // OPACITY
 
-  const updateObjectProperty = (property: string, value: number) => {
+  const updateObjectProperty = (property: string, value: number | boolean) => {
     // console.log(property, value, "property and value");
     if (!canvas || !selectedObject) return;
 
@@ -78,6 +78,30 @@ function Properties() {
   const handleDelete = () => {
     if (!canvas || !selectedObject) return;
     deleteSelectedObject(canvas);
+  };
+
+  // ARRANGEMENT
+  const handleBringToFront = () => {
+    if (!canvas || !selectedObject) return;
+    canvas.bringObjectToFront(selectedObject);
+    canvas.renderAll();
+  };
+  const handleSendToBack = () => {
+    if (!canvas || !selectedObject) return;
+    canvas.sendObjectToBack(selectedObject);
+    canvas.renderAll();
+  };
+
+  // FLIP X & FLIP Y
+  const handleFlipObjectX = () => {
+    if (!canvas || !selectedObject) return;
+    const flipX = !selectedObject.flipX;
+    updateObjectProperty("flipX", flipX);
+  };
+  const handleFlipObjectY = () => {
+    if (!canvas || !selectedObject) return;
+    const flipY = !selectedObject.flipY;
+    updateObjectProperty("flipY", flipY);
   };
 
   // TEXT HANDLERS
@@ -177,24 +201,44 @@ function Properties() {
         </div>
         {/* FLIP HORIZONTAL AND VERTICAL */}
         <div className="flex flex-wrap gap-2">
-          <Button variant={"outline"} size="sm" className={"h-8 text-sm"}>
+          <Button
+            onClick={handleFlipObjectX}
+            variant={"outline"}
+            size="sm"
+            className={"h-8 text-sm"}
+          >
             <FlipHorizontal className="w-4 h-4 mr-1" />
-            Flip - H
+            Flip - X
           </Button>
-          <Button variant={"outline"} size="sm" className={"h-8 text-sm"}>
+          <Button
+            onClick={handleFlipObjectY}
+            variant={"outline"}
+            size="sm"
+            className={"h-8 text-sm"}
+          >
             <FlipVertical className="w-4 h-4 mr-1" />
-            Flip - H
+            Flip - Y
           </Button>
         </div>
         {/* ARRANGEMENT */}
         <div className="space-y-4 pt-4 border-t">
           <h3 className="text-sm font-medium">Layer Position</h3>
           <div className="grid grid-cols-2 gap-2">
-            <Button variant={"outline"} size="sm" className={"h-8 text-xs"}>
+            <Button
+              onClick={handleBringToFront}
+              variant={"outline"}
+              size="sm"
+              className={"h-8 text-xs"}
+            >
               <MoveUp className="w-4 h-4" />
               <span>Bring To Front</span>
             </Button>
-            <Button variant={"outline"} size="sm" className={"h-8 text-xs"}>
+            <Button
+              onClick={handleSendToBack}
+              variant={"outline"}
+              size="sm"
+              className={"h-8 text-xs"}
+            >
               <MoveDown className="w-4 h-4" />
               <span>Send To Back</span>
             </Button>

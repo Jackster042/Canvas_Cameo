@@ -1,6 +1,7 @@
 "use client";
 
 import { centerCanvas } from "@/fabric/fabric-utils";
+import { debounce } from "lodash";
 import { create } from "zustand";
 
 type Store = {
@@ -15,6 +16,11 @@ type Store = {
   setName: (value: string) => void;
   showProperties: boolean;
   setShowProperties: (flag: boolean) => void;
+  saveStatus: string;
+  setSaveStatus: (status: string) => void;
+  lastModified: number;
+  isModified: boolean;
+  markAsModified: () => void;
 };
 
 export const useEditorStore = create<Store>((set, get) => ({
@@ -37,6 +43,27 @@ export const useEditorStore = create<Store>((set, get) => ({
   // PROPERTIES
   showProperties: false,
   setShowProperties: (flag: boolean) => set({ showProperties: flag }),
+  // MODIFIED ITEM
+  saveStatus: "saved",
+  setSaveStatus: (status: string) => set({ saveStatus: status }),
+  lastModified: Date.now(),
+  isModified: false,
+
+  markAsModified: () => {
+    const designId = get().designId;
+
+    if (designId) {
+      set({
+        lastModified: Date.now(),
+        saveStatus: "Saving...",
+        isModified: true,
+      });
+
+      // get().debouncedSaveToServer(); //TODO: ADD LATER .W SAVE TO SERVER METHOD IN ZUSTAND
+    } else {
+      console.error("Design ID not found");
+    }
+  },
   // CLEANUP
   resetStore: () => {
     set({

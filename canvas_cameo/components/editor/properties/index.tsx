@@ -1,5 +1,7 @@
 "use client";
 
+import * as fabric from "fabric";
+
 import { useEffect, useState } from "react";
 import { useEditorStore } from "@/store";
 import { Label } from "@/components/ui/label";
@@ -30,7 +32,7 @@ import { SelectTrigger } from "@radix-ui/react-select";
 import { fontFamilies } from "@/config";
 
 function Properties() {
-  const { canvas } = useEditorStore();
+  const { canvas, markAsModified } = useEditorStore();
 
   // ACTIVE OBJECT
   const [selectedObject, setSelectedObject] = useState<FabricObject | null>(
@@ -63,6 +65,8 @@ function Properties() {
   const [borderStyle, setBorderStyle] = useState<string>("solid");
 
   // IMAGE
+  const [filter, setFilter] = useState<string>("");
+  const [blur, setBlur] = useState<number>(0);
 
   // ADDITIONAL
 
@@ -194,6 +198,55 @@ function Properties() {
 
     updateObjectProperty("strokeDashArray", strokeDashArray);
   };
+
+  // IMAGE HANDLERS
+  function isFabricImage(obj: fabric.Object | undefined): obj is fabric.Image {
+    return obj?.type === "image";
+  }
+  const handleImageFilterChange = async (value: string) => {
+    setFilter(value);
+    if (!canvas || !selectedObject || !isFabricImage(selectedObject)) return; //TODO: CHECK THIS FOR TYPE SAFETY
+    try {
+      canvas.discardActiveObject();
+
+      const { filters } = await import("fabric");
+
+      const image = selectedObject as fabric.Image;
+      image.filters = [];
+
+      switch (value) {
+        case "grayscale":
+          selectedObject.filters.push(new filters.Grayscale());
+
+          break;
+        case "sepia":
+          selectedObject.filters.push(new filters.Sepia());
+
+          break;
+        case "invert":
+          selectedObject.filters.push(new filters.Invert());
+
+          break;
+        case "blur":
+          selectedObject.filters.push(new filters.Blur({ blur: blur / 100 }));
+
+          break;
+        case "none":
+        default:
+          break;
+      }
+
+      selectedObject.applyFilters();
+
+      canvas.setActiveObject(selectedObject);
+      canvas.renderAll();
+      markAsModified();
+    } catch (err) {
+      console.error(err, "Error from handleImageFilterChange");
+      return null;
+    }
+  };
+  const handleBlurChange = async (value: number) => {};
 
   useEffect(() => {
     if (!canvas) return;
@@ -574,6 +627,83 @@ function Properties() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+        )}
+
+        {/* IMAGE RELATED PROPERTIES */}
+        {objectType === "image" && (
+          <div className="space-y-4 p-4 border-t">
+            <h3 className="text-sm font-medium">Image Properties</h3>
+            <div className="space-y-2">
+              <Label htmlFor="border-color" className="text-xs">
+                Border Color
+              </Label>
+              <div className="relative w-8 h-8 overflow-hidden rounded-md border">
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundColor: borderColor }}
+                >
+                  <Input
+                    id="border-color"
+                    type="color"
+                    value={borderColor}
+                    onChange={handleBorderColorChange}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="border-width" className="text-xs">
+                Border Width
+              </Label>
+              <span className="text-xs mb-2">{borderWidth}%</span>
+              <Slider
+                id="border-width"
+                min={0}
+                max={100}
+                step={1}
+                value={[borderWidth]}
+                onValueChange={(e) => handleBorderWidthChange(e)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="border-style" className={"text-xs"}>
+                Border Style
+              </Label>
+              <Select
+                value={borderStyle}
+                onValueChange={handleBorderStyleChange}
+              >
+                <SelectTrigger id="border-style" className={"h-10"}>
+                  <SelectValue placeholder="Select border style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="solid">Solid</SelectItem>
+                  <SelectItem value="dashed">Dashed</SelectItem>
+                  <SelectItem value="dotted">Dotted</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {/* FILTER */}
+            <div className="space-y-2">
+              <Label htmlFor="filter" className={"text-xs"}>
+                Filter
+              </Label>
+              <Select value={filter} onValueChange={handleImageFilterChange}>
+                <SelectTrigger id="filter" className={"h-10"}>
+                  <SelectValue placeholder="Select Image Filter" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="grayscale">Grayscale</SelectItem>
+                  <SelectItem value="sepia">Sepia</SelectItem>
+                  <SelectItem value="invert">Invert</SelectItem>
+                  <SelectItem value="blur">Blur</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {/* BLUR */}
           </div>
         )}
       </div>

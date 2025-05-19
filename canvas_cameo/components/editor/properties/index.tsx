@@ -57,6 +57,10 @@ function Properties() {
   const [letterSpacing, setLetterSpacing] = useState<number>(0);
 
   // SHAPES
+  const [fillColor, setFillColor] = useState<string>("#ffffff");
+  const [borderColor, setBorderColor] = useState<string>("#000000");
+  const [borderWidth, setBorderWidth] = useState<number>(0);
+  const [borderStyle, setBorderStyle] = useState<string>("solid");
 
   // IMAGE
 
@@ -66,7 +70,8 @@ function Properties() {
 
   const updateObjectProperty = (
     property: string,
-    value: number | boolean | string
+    // value: number | boolean | string
+    value: any
   ) => {
     // console.log(property, value, "property and value");
     if (!canvas || !selectedObject) return;
@@ -158,6 +163,36 @@ function Properties() {
     const newLetterSpacing = value[0];
     setLetterSpacing(newLetterSpacing);
     updateObjectProperty("charSpacing", newLetterSpacing);
+  };
+
+  // SHAPE HANDLERS
+  const handleFillColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFillColor = e.target.value;
+    setFillColor(newFillColor);
+    updateObjectProperty("fill", newFillColor);
+  };
+  const handleBorderColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newBorderColor = e.target.value;
+    setBorderColor(newBorderColor);
+    updateObjectProperty("stroke", newBorderColor);
+  };
+  const handleBorderWidthChange = (value: number[]) => {
+    const newBorderWidth = value[0];
+    setBorderWidth(newBorderWidth);
+    updateObjectProperty("strokeWidth", newBorderWidth);
+  };
+  const handleBorderStyleChange = (value: string) => {
+    setBorderStyle(value);
+
+    let strokeDashArray = null;
+
+    if (value === "dashed") {
+      strokeDashArray = [5, 5];
+    } else if (value === "dotted") {
+      strokeDashArray = [2, 2];
+    }
+
+    updateObjectProperty("strokeDashArray", strokeDashArray);
   };
 
   useEffect(() => {
@@ -442,9 +477,9 @@ function Properties() {
               </div>
             </div>
             {/* LETTER SPACING */}
-            <div className="space-y-2">
+            <div className="space-y-2 pt-2 border-t">
               <div className="flex justify-between">
-                <Label htmlFor="letter-spacing" className="text-sm">
+                <Label htmlFor="letter-spacing" className={"text-xs"}>
                   Letter Spacing
                 </Label>
                 <span className="text-xs">{letterSpacing}</span>
@@ -456,6 +491,88 @@ function Properties() {
                   onValueChange={(value) => handleLetterSpacingChange(value)}
                 />
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* SHAPE RELATED PROPERTIES */}
+        {objectType === "shape" && (
+          <div className="space-y-4 p-4 border-t">
+            <h3 className="text-sm font-medium">Shape Properties</h3>
+            {/* FILL COLOR AND BORDER COLOR */}
+            <div className="flex justify-between">
+              <div className="space-y-2">
+                <Label htmlFor="fill-color" className="text-xs">
+                  Fill Color
+                </Label>
+                <div className="relative w-8 h-8 overflow-hidden rounded-md border">
+                  <div
+                    className="absolute inset-0"
+                    style={{ backgroundColor: fillColor }}
+                  >
+                    <Input
+                      id="fill-color"
+                      type="color"
+                      value={fillColor}
+                      onChange={handleFillColorChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="border-color" className="text-xs">
+                  Border Color
+                </Label>
+                <div className="relative w-8 h-8 overflow-hidden rounded-md border">
+                  <div
+                    className="absolute inset-0"
+                    style={{ backgroundColor: borderColor }}
+                  >
+                    <Input
+                      id="border-color"
+                      type="color"
+                      value={borderColor}
+                      onChange={handleBorderColorChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* BORDER WIDTH */}
+            <div className="space-y-2">
+              <Label htmlFor="border-width" className="text-xs">
+                Border Width
+              </Label>
+              <span className="text-xs mb-2">{borderWidth}%</span>
+              <Slider
+                id="border-width"
+                min={0}
+                max={100}
+                step={1}
+                value={[borderWidth]}
+                onValueChange={(e) => handleBorderWidthChange(e)}
+              />
+            </div>
+            {/* BORDER STYLE */}
+            <div className="space-y-2 border border-amber-200">
+              <Label htmlFor="border-style" className={"text-xs"}>
+                Border Style
+              </Label>
+              <Select
+                value={borderStyle}
+                onValueChange={handleBorderStyleChange}
+              >
+                <SelectTrigger id="border-style" className={"h-10"}>
+                  <SelectValue placeholder="Select border style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="solid">Solid</SelectItem>
+                  <SelectItem value="dashed">Dashed</SelectItem>
+                  <SelectItem value="dotted">Dotted</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         )}

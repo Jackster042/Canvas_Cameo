@@ -379,6 +379,7 @@ function Properties() {
     const handleSelectionCleared = () => {};
 
     const activeObject = canvas.getActiveObject();
+    console.log(activeObject, "active object");
     if (activeObject) {
       // setSelectedObject(activeObject); // TODO: ERROR
       handleSelectionCreated();
@@ -398,8 +399,7 @@ function Properties() {
   }, [canvas]);
 
   // console.log(selectedObject, "selected object");
-  console.log(filter === "blur", "filter blur");
-  console.log(filter === "grayscale", "filter grayscale");
+  console.log(objectType, "object type");
 
   return (
     <div className="fixed right-0 top-[56px] bottom-[0px] w-[280px] bg-white border-1 border-gray-200 z-10">
@@ -826,6 +826,61 @@ function Properties() {
         )}
 
         {/* PATH RELATED PROPERTIES */}
+        {objectType === "path" && (
+          <div className="space-y-4 p-4 border-t">
+            <h3 className="text-sm font-medium">Path Properties</h3>
+            <div className="space-y-2">
+              <Label htmlFor="border-color" className="text-xs">
+                Border Color
+              </Label>
+              <div className="relative w-8 h-8 overflow-hidden rounded-md border">
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundColor: borderColor }}
+                />
+                <Input
+                  id="fill-color"
+                  type="color"
+                  value={borderColor}
+                  onChange={handleBorderColorChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="border-width" className={"text-xs"}>
+                Border Width
+              </Label>
+              <span className={"text-xs mb-2"}>{borderWidth}%</span>
+              <Slider
+                id="border-width"
+                min={0}
+                max={20}
+                step={1}
+                value={[borderWidth]}
+                onValueChange={(value) => handleBorderWidthChange(value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="border-style" className={"text-xs"}>
+                Border Style
+              </Label>
+              <Select
+                value={borderStyle}
+                onValueChange={handleBorderStyleChange}
+              >
+                <SelectTrigger id="border-style" className={"h-10"}>
+                  <SelectValue placeholder="Select Border Style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="solid">Solid</SelectItem>
+                  <SelectItem value="dashed">Dashed</SelectItem>
+                  <SelectItem value="dotted">Dotted</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

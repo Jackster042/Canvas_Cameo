@@ -26,9 +26,9 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SelectTrigger } from "@radix-ui/react-select";
 import { fontFamilies } from "@/config";
 
 function Properties() {
@@ -213,6 +213,7 @@ function Properties() {
   }
   const handleImageFilterChange = async (value: string) => {
     setFilter(value);
+    console.log(value, "CHECKING VALUE");
     if (!canvas || !selectedObject || !isFabricImage(selectedObject)) return; //TODO: CHECK THIS FOR TYPE SAFETY
     try {
       canvas.discardActiveObject();
@@ -251,10 +252,30 @@ function Properties() {
       markAsModified();
     } catch (err) {
       console.error(err, "Error from handleImageFilterChange");
-      return null;
     }
   };
-  const handleBlurChange = async (value: number) => {};
+  const handleBlurChange = async (value: number[]) => {
+    const newBlur = value[0];
+    setBlur(newBlur);
+    if (
+      !canvas ||
+      !selectedObject ||
+      !isFabricImage(selectedObject) ||
+      filter !== "blur"
+    )
+      return;
+
+    try {
+      const { filters } = await import("fabric");
+
+      selectedObject.filters = [new filters.Blur({ blur: newBlur / 100 })];
+      selectedObject.applyFilters();
+      canvas.renderAll();
+      markAsModified();
+    } catch (err) {
+      console.error(err, "Error from handleBlurChange");
+    }
+  };
 
   useEffect(() => {
     if (!canvas) return;
@@ -274,12 +295,84 @@ function Properties() {
         if (activeObject.type === "i-text") {
           setObjectType("text");
           // console.log(activeObject.type, "object type");
+          setText(activeObject.text || "");
+          setFontSize(activeObject.fontSize || 24);
+          setFontFamily(activeObject.fontFamily || "Arial");
+          setFontWeight(activeObject.fontWeight || "normal");
+          setFontStyle(activeObject.fontStyle || "normal");
+          setUnderline(activeObject.underline || false);
+          setTextColor(activeObject.fill || "#000000");
+          setTextBackgroundColor(activeObject.backgroundColor || "");
+          setLetterSpacing(activeObject.charSpacing || 0);
         } else if (activeObject.type === "image") {
           setObjectType("image");
+
+          if (activeObject.filters && activeObject.filters.length > 0) {
+            const filterObj = activeObject.filters[0];
+            if (filterObj.type === "Grayscale") setFilter("grayscale");
+            else if (filterObj.type === "Sepia") setFilter("sepia");
+            else if (filterObj.type === "Invert") setFilter("invert");
+            else if (filterObj.type === "Blur") {
+              setFilter("blur");
+              setBlur(filterObj.blur * 100 || 0);
+            } else setFilter("none");
+          }
+
+          if (activeObject.strokeDashArray) {
+            if (
+              activeObject.strokeDashArray[0] === 5 &&
+              activeObject.strokeDashArray[1] === 5
+            ) {
+              setBorderStyle("dashed");
+            } else if (
+              activeObject.strokeDashArray[0] === 2 &&
+              activeObject.strokeDashArray[1] === 2
+            ) {
+              setBorderStyle("dotted");
+            } else {
+              setBorderStyle("solid");
+            }
+          }
         } else if (activeObject.type === "path") {
           setObjectType("path");
+
+          if (activeObject.strokeDashArray) {
+            if (
+              activeObject.strokeDashArray[0] === 5 &&
+              activeObject.strokeDashArray[1] === 5
+            ) {
+              setBorderStyle("dashed");
+            } else if (
+              activeObject.strokeDashArray[0] === 2 &&
+              activeObject.strokeDashArray[1] === 2
+            ) {
+              setBorderStyle("dotted");
+            } else {
+              setBorderStyle("solid");
+            }
+          }
         } else {
           setObjectType("shape");
+
+          if (activeObject.fill && typeof activeObject.fill === "string") {
+            setFillColor(activeObject.fill);
+          }
+
+          if (activeObject.strokeDashArray) {
+            if (
+              activeObject.strokeDashArray[0] === 5 &&
+              activeObject.strokeDashArray[1] === 5
+            ) {
+              setBorderStyle("dashed");
+            } else if (
+              activeObject.strokeDashArray[0] === 2 &&
+              activeObject.strokeDashArray[1] === 2
+            ) {
+              setBorderStyle("dotted");
+            } else {
+              setBorderStyle("solid");
+            }
+          }
         }
       }
     };
@@ -305,6 +398,8 @@ function Properties() {
   }, [canvas]);
 
   // console.log(selectedObject, "selected object");
+  console.log(filter === "blur", "filter blur");
+  console.log(filter === "grayscale", "filter grayscale");
 
   return (
     <div className="fixed right-0 top-[56px] bottom-[0px] w-[280px] bg-white border-1 border-gray-200 z-10">
@@ -617,7 +712,7 @@ function Properties() {
               />
             </div>
             {/* BORDER STYLE */}
-            <div className="space-y-2 border border-amber-200">
+            <div className="space-y-2">
               <Label htmlFor="border-style" className={"text-xs"}>
                 Border Style
               </Label>
@@ -650,29 +745,28 @@ function Properties() {
                 <div
                   className="absolute inset-0"
                   style={{ backgroundColor: borderColor }}
-                >
-                  <Input
-                    id="border-color"
-                    type="color"
-                    value={borderColor}
-                    onChange={handleBorderColorChange}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                  />
-                </div>
+                />
+                <Input
+                  id="fill-color"
+                  type="color"
+                  value={borderColor}
+                  onChange={handleBorderColorChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="border-width" className="text-xs">
+              <Label htmlFor="border-width" className={"text-xs"}>
                 Border Width
               </Label>
-              <span className="text-xs mb-2">{borderWidth}%</span>
+              <span className={"text-xs mb-2"}>{borderWidth}%</span>
               <Slider
                 id="border-width"
                 min={0}
-                max={100}
+                max={20}
                 step={1}
                 value={[borderWidth]}
-                onValueChange={(e) => handleBorderWidthChange(e)}
+                onValueChange={(value) => handleBorderWidthChange(value)}
               />
             </div>
             <div className="space-y-2">
@@ -684,7 +778,7 @@ function Properties() {
                 onValueChange={handleBorderStyleChange}
               >
                 <SelectTrigger id="border-style" className={"h-10"}>
-                  <SelectValue placeholder="Select border style" />
+                  <SelectValue placeholder="Select Border Style" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="solid">Solid</SelectItem>
@@ -693,7 +787,6 @@ function Properties() {
                 </SelectContent>
               </Select>
             </div>
-            {/* FILTER */}
             <div className="space-y-2">
               <Label htmlFor="filter" className={"text-xs"}>
                 Filter
@@ -711,9 +804,28 @@ function Properties() {
                 </SelectContent>
               </Select>
             </div>
-            {/* BLUR */}
+            {filter === "blur" && (
+              <div className="space-y-2">
+                <div className="flex justify-between mb-4">
+                  <Label htmlFor="blur" className="text-xs">
+                    Blur Amount
+                  </Label>
+                  <span className="font-medium text-xs">{blur}%</span>
+                </div>
+                <Slider
+                  id="blur"
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={[blur]}
+                  onValueChange={(value) => handleBlurChange(value)}
+                />
+              </div>
+            )}
           </div>
         )}
+
+        {/* PATH RELATED PROPERTIES */}
       </div>
     </div>
   );

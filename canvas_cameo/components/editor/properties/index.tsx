@@ -128,8 +128,16 @@ function Properties() {
   };
 
   // TEXT HANDLERS
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {};
-  const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    setText(newText);
+    updateObjectProperty("text", newText);
+  };
+  const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFontSize = Number(e.target.value);
+    setFontSize(newFontSize);
+    updateObjectProperty("fontSize", newFontSize);
+  };
   const handleFontFamilyChange = (value: string) => {
     setFontFamily(value);
     updateObjectProperty("fontFamily", value);

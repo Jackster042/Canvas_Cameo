@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { LogOut, Save, Star } from "lucide-react";
+import { LogOut, Save, Star, Upload } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,10 +13,12 @@ import { useEditorStore } from "@/store";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut, useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ExportModal from "../export";
 
 function Header() {
   const { isEditing, setIsEditing, name, setName, canvas } = useEditorStore();
+  const [showExportModal, setShowExportModal] = useState(false);
   const { data: session } = useSession();
 
   const handleLogout = async () => {
@@ -63,6 +65,12 @@ function Header() {
         <button className="header-button ml-3 relative" title="Save">
           <Save className="w-5 h-5 cursor-pointer" />
         </button>
+        <button className="header-button ml-3 relative" title="Save">
+          <Upload
+            onClick={() => setShowExportModal(true)}
+            className="w-5 h-5 cursor-pointer"
+          />
+        </button>
       </div>
 
       <div className="flex-1 flex justify-center max-w-md">
@@ -102,6 +110,11 @@ function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      {/* RENDER EXPORT MODAL */}
+      <ExportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+      />
     </header>
   );
 }

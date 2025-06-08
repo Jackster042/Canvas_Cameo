@@ -5,8 +5,12 @@ import jsPDF from "jspdf";
 export function exportAsJson(canvas: Canvas, fileName = "FileName") {
   if (!canvas) return;
   try {
-    const canvasData = canvas.toJSON(["id", "filters"]);
+    const canvasData = canvas.toJSON(["id", "filters"]); // TODO: CHECK THIS LATER !!!
     const jsonStringify = JSON.stringify(canvasData, null, 2);
+    // create a blob from the json string
+    // the blob constructor takes an array of values, so we pass the json string as the first element
+    // the second argument is an options object, where we specify the mime type of the blob
+    // in this case, we want to save the blob as a json file, so we set the mime type to "application/json"
     const canvasJsonBlob = new Blob([jsonStringify], {
       type: "application/json",
     });

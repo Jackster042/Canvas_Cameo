@@ -495,10 +495,6 @@
     margin-top: calc(var(--spacing) * 1);
   }
 
-  .mt-2 {
-    margin-top: calc(var(--spacing) * 2);
-  }
-
   .mt-3 {
     margin-top: calc(var(--spacing) * 3);
   }
@@ -1540,10 +1536,6 @@
 
   .text-\[\#8b3dff\] {
     color: #8b3dff;
-  }
-
-  .text-accent-foreground {
-    color: var(--accent-foreground);
   }
 
   .text-card-foreground {

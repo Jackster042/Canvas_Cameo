@@ -1,4 +1,5 @@
-"use client";
+import { saveCanvasState, saveDesign } from "@/services/design-service";
+("use client");
 
 import { centerCanvas } from "@/fabric/fabric-utils";
 import { debounce } from "lodash";
@@ -21,6 +22,8 @@ type Store = {
   lastModified: number;
   isModified: boolean;
   markAsModified: () => void;
+  saveToServer: () => Promise<any>;
+  debouncedSaveToServer: () => Promise<any>;
 };
 
 export const useEditorStore = create<Store>((set, get) => ({
@@ -59,11 +62,33 @@ export const useEditorStore = create<Store>((set, get) => ({
         isModified: true,
       });
 
-      // get().debouncedSaveToServer(); //TODO: ADD LATER .W SAVE TO SERVER METHOD IN ZUSTAND
+      get().debouncedSaveToServer(); //TODO: ADD LATER .W SAVE TO SERVER METHOD IN ZUSTAND
     } else {
       console.error("Design ID not found");
     }
   },
+
+  saveToServer: async () => {
+    const designId = get().designId;
+    const canvas = get().canvas;
+
+    if (!designId || !canvas) {
+      console.error("Design ID or canvas not found");
+      return;
+    }
+
+    try {
+      const savedDesign = await saveCanvasState(canvas, designId, get().name);
+      set({ saveStatus: "saved", isModified: false });
+      return savedDesign;
+    } catch (err) {
+      console.error(err, "Error from saveToServer");
+      return null;
+    }
+  },
+
+  debouncedSaveToServer: debounce(async () => await get().saveToServer(), 500),
+
   // CLEANUP
   resetStore: () => {
     set({
@@ -73,6 +98,9 @@ export const useEditorStore = create<Store>((set, get) => ({
       name: "Untitled Design",
       showProperties: false,
       setShowProperties: (flag: boolean) => set({ showProperties: flag }),
+      saveStatus: "saved",
+      isModified: false,
+      lastModified: Date.now(),
     });
   },
 }));

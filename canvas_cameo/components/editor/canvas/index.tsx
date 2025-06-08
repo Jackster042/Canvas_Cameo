@@ -16,7 +16,7 @@ function Canvas() {
   const fabricCanvasRef = useRef<FabricCanvas | null>(null);
   const initAttemptedRef = useRef(false);
 
-  const { setCanvas } = useEditorStore();
+  const { setCanvas, markAsModified } = useEditorStore();
 
   useEffect(() => {
     // CLEANUP CANVAS
@@ -81,6 +81,7 @@ function Canvas() {
 
         // IMPLEMENT AUTO-SAVE FEATURE AND SAVE UPDATED CANVAS
         const handleCanvasChange = () => {
+          markAsModified();
           console.log("canvas changed || path changed");
         };
 

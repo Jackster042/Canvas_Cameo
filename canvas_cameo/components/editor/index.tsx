@@ -97,7 +97,7 @@ function MainEditor() {
 
             canvas.clear();
             if (design.width && design.height) {
-              canvas.setDimension({
+              canvas.setDimensions({
                 width: design.width,
                 height: design.height,
               });

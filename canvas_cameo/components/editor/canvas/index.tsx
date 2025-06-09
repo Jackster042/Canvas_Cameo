@@ -8,7 +8,7 @@ import { Canvas as FabricCanvas } from "fabric";
 import { useEditorStore } from "@/store";
 
 // FABRIC
-import { initializeFabric } from "@/fabric/fabric-utils";
+import { customizeBoundingBox, initializeFabric } from "@/fabric/fabric-utils";
 
 function Canvas() {
   const canvasRef = useRef(null);
@@ -54,8 +54,9 @@ function Canvas() {
         typeof window === undefined ||
         !canvasRef.current ||
         initAttemptedRef.current
-      )
+      ) {
         return;
+      }
       initAttemptedRef.current = true;
 
       try {
@@ -76,6 +77,7 @@ function Canvas() {
         console.log("canvas initialized");
 
         // TODO: APPLY CUSTOM STYLES FOR THE CONTROLS
+        customizeBoundingBox(fabricCanvas);
 
         // TODO: ADD EVENT LISTENERS FOR THE CANVAS
 

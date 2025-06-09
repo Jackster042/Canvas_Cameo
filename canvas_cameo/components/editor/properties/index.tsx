@@ -82,6 +82,7 @@ function Properties() {
 
     selectedObject.set(property, value);
     canvas.renderAll();
+    markAsModified();
   };
 
   const handleOpacityChange = (value: number[]) => {
@@ -95,12 +96,14 @@ function Properties() {
   const handleDuplicate = async () => {
     if (!canvas || !selectedObject) return;
     await cloneSelectedObject(canvas);
+    markAsModified();
   };
 
   // DELETE
   const handleDelete = () => {
     if (!canvas || !selectedObject) return;
     deleteSelectedObject(canvas);
+    markAsModified();
   };
 
   // ARRANGEMENT
@@ -108,11 +111,13 @@ function Properties() {
     if (!canvas || !selectedObject) return;
     canvas.bringObjectToFront(selectedObject);
     canvas.renderAll();
+    markAsModified();
   };
   const handleSendToBack = () => {
     if (!canvas || !selectedObject) return;
     canvas.sendObjectToBack(selectedObject);
     canvas.renderAll();
+    markAsModified();
   };
 
   // FLIP X & FLIP Y

@@ -1,6 +1,7 @@
 import { createShape } from "./shapes/shapes-factory";
 import { shapeDefinitions } from "./shapes/shapes-definitions";
 import { TextPreset } from "@/config";
+import { Canvas } from "fabric";
 
 // INTERFACE
 interface InitializeFabricProps {
@@ -337,5 +338,38 @@ export const deleteSelectedObject = async (canvas: any) => {
   } catch (err) {
     console.error(err, "failed to delete selected object");
     return null;
+  }
+};
+
+export const customizeBoundingBox = async (canvas: Canvas) => {
+  if (!canvas) return;
+
+  try {
+    canvas.on("object:added", (e) => {
+      if (e.target) {
+        e.target.set({
+          borderColor: "#00ffe7",
+          cornerColor: "#000000",
+          cornerStrokeColor: "#00ffe7",
+          cornerSize: 10,
+          transparentCorners: false,
+        });
+      }
+    });
+
+    canvas.getObjects().forEach((object) => {
+      object.set({
+        borderColor: "#00ffe7",
+        cornerColor: "#000000",
+        cornerStrokeColor: "#00ffe7",
+        cornerSize: 10,
+        transparentCorners: false,
+      });
+    });
+
+    canvas.renderAll();
+  } catch (err) {
+    console.error(err, "failed to customize bounding box");
+    throw new Error("failed to customize bounding box");
   }
 };

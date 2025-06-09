@@ -1,5 +1,4 @@
 import { saveCanvasState, saveDesign } from "@/services/design-service";
-("use client");
 
 import { centerCanvas } from "@/fabric/fabric-utils";
 import { debounce } from "lodash";
@@ -8,7 +7,7 @@ import { create } from "zustand";
 type Store = {
   canvas: any;
   setCanvas: (canvas: any) => void;
-  designId: string | null;
+  designId: any;
   setDesignId: (id: string) => void;
   resetStore: () => void;
   isEditing: boolean;
@@ -23,7 +22,7 @@ type Store = {
   isModified: boolean;
   markAsModified: () => void;
   saveToServer: () => Promise<any>;
-  debouncedSaveToServer: () => Promise<any>;
+  debouncedSaveToServer: () => Promise<any> | void;
 };
 
 export const useEditorStore = create<Store>((set, get) => ({
@@ -68,26 +67,31 @@ export const useEditorStore = create<Store>((set, get) => ({
     }
   },
 
+  // SAVE
+
   saveToServer: async () => {
     const designId = get().designId;
     const canvas = get().canvas;
 
     if (!designId || !canvas) {
       console.error("Design ID or canvas not found");
-      return;
+      return null;
     }
 
     try {
       const savedDesign = await saveCanvasState(canvas, designId, get().name);
-      set({ saveStatus: "saved", isModified: false });
+      set({ saveStatus: "Saved", isModified: false });
       return savedDesign;
     } catch (err) {
       console.error(err, "Error from saveToServer");
+      set({ saveStatus: "Error" });
       return null;
     }
   },
 
-  debouncedSaveToServer: debounce(async () => await get().saveToServer(), 500),
+  debouncedSaveToServer: debounce(() => {
+    get().saveToServer();
+  }, 500),
 
   // CLEANUP
   resetStore: () => {
@@ -98,7 +102,7 @@ export const useEditorStore = create<Store>((set, get) => ({
       name: "Untitled Design",
       showProperties: false,
       setShowProperties: (flag: boolean) => set({ showProperties: flag }),
-      saveStatus: "saved",
+      saveStatus: "Saved",
       isModified: false,
       lastModified: Date.now(),
     });

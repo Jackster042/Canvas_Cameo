@@ -27,13 +27,13 @@ export async function deleteDesign(designId: string) {
 
 export async function saveCanvasState(
   canvas: Canvas,
-  designId: string,
-  title = "Untitled design"
+  designId = null,
+  title = "Untitled Design"
 ) {
   if (!canvas) return false;
 
   try {
-    const canvasData = canvas.toJSON(["id", "filters"]); // TODO: CHECK THIS LATER !!!
+    const canvasData = canvas.toJSON(["id", "filters"]);
 
     const designData = {
       name: title,
@@ -42,9 +42,9 @@ export async function saveCanvasState(
       height: canvas.height,
     };
 
-    return await saveDesign(designData, designId);
-  } catch (err) {
-    console.error(err, "Error from saveCanvasState");
-    throw new Error("Error from saveCanvasState");
+    return saveDesign(designData, designId);
+  } catch (error) {
+    console.error("Error saving canvas state:", error);
+    throw error;
   }
 }

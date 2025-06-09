@@ -17,7 +17,7 @@ import { centerCanvas } from "@/fabric/fabric-utils";
 
 function SettingsPanel() {
   const [backgroundColor, setBackgroundColor] = useState("#FFFFFF");
-  const { canvas } = useEditorStore();
+  const { canvas, markAsModified } = useEditorStore();
 
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBackgroundColor(e.target.value);
@@ -29,6 +29,8 @@ function SettingsPanel() {
     canvas.renderAll();
 
     centerCanvas(canvas);
+
+    markAsModified();
   };
 
   const handleColorPresetApply = (color: string) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { LogOut, Save, Star, Upload } from "lucide-react";
+import { LogOut, Save, SaveOff, Star, Upload } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +17,16 @@ import { useEffect, useState } from "react";
 import ExportModal from "../export";
 
 function Header() {
-  const { isEditing, setIsEditing, name, setName, canvas } = useEditorStore();
+  const {
+    isEditing,
+    setIsEditing,
+    name,
+    setName,
+    canvas,
+    saveStatus,
+    markAsModified,
+    designId,
+  } = useEditorStore();
   const [showExportModal, setShowExportModal] = useState(false);
   const { data: session } = useSession();
 
@@ -33,6 +42,11 @@ function Header() {
       obj.evented = isEditing;
     });
   }, [isEditing]);
+
+  useEffect(() => {
+    if (!canvas || !designId) return;
+    markAsModified();
+  }, [name, canvas, designId]);
 
   return (
     <header className="header-gradient header flex items-center justify-between px-4 h-14">
@@ -63,7 +77,11 @@ function Header() {
         </DropdownMenu>
         {/* SAVE BUTTON */}
         <button className="header-button ml-3 relative" title="Save">
-          <Save className="w-5 h-5 cursor-pointer" />
+          {saveStatus === "Saving..." ? (
+            <SaveOff className="w-5 h-5 cursor-pointer animate-spin" />
+          ) : (
+            <Save className="w-5 h-5 cursor-pointer" />
+          )}
         </button>
         <button className="header-button ml-3 relative" title="Save">
           <Upload

@@ -686,6 +686,10 @@
     height: 1.15rem;
   }
 
+  .h-\[300px\] {
+    height: 300px;
+  }
+
   .h-\[600px\] {
     height: 600px;
   }
@@ -784,6 +788,10 @@
 
   .w-\[280px\] {
     width: 280px;
+  }
+
+  .w-\[300px\] {
+    width: 300px;
   }
 
   .w-fit {
@@ -1347,6 +1355,10 @@
 
   .fill-primary {
     fill: var(--primary);
+  }
+
+  .object-contain {
+    object-fit: contain;
   }
 
   .object-cover {

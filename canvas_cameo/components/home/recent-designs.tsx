@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { getUserDesigns } from "@/services/design-service";
+import DesignPreview from "./design-preview";
 
 function RecentDesigns() {
   const [userDesigns, setUserDesigns] = useState<any[]>([]);
@@ -36,11 +37,16 @@ function RecentDesigns() {
             <h1 className="text-center text-2xl font-bold">No designs found</h1>
           )}
           {userDesigns.map((design) => (
-            <div key={design._id} className="group cursor-pointer">
-              <div
-                onClick={() => router.push(`/editor/${design._id}`)}
-                className="aspect-video bg-gray-100 rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md"
-              />
+            <div
+              key={design._id}
+              className="group cursor-pointer"
+              onClick={() => router.push(`/editor/${design._id}`)}
+            >
+              <div className="w-[300px] h-[300px] rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md">
+                {design?.canvasData && (
+                  <DesignPreview key={design._id} design={design} />
+                )}
+              </div>
               <p className="text-sm font-bold truncate text-center">
                 {design.name}
               </p>

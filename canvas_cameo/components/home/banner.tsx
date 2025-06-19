@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Crown, Loader } from "lucide-react";
 import { Button } from "../ui/button";
 
 import { saveDesign } from "@/services/design-service";
+import { getUserSubscription } from "@/services/subscription-service";
 
 interface DesignData {
   name: string;
@@ -46,6 +47,15 @@ function Banner() {
       setLoading(false);
     }
   };
+
+  const fetchSubscription = async () => {
+    const response = await getUserSubscription();
+    console.log(response, "response from fetchSubscription");
+  };
+
+  useEffect(() => {
+    fetchSubscription();
+  }, []);
 
   return (
     <>

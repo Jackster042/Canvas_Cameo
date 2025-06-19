@@ -23,6 +23,7 @@ type Store = {
   markAsModified: () => void;
   saveToServer: () => Promise<any>;
   debouncedSaveToServer: () => Promise<any> | void;
+  userSubscription: any;
 };
 
 export const useEditorStore = create<Store>((set, get) => ({
@@ -92,6 +93,10 @@ export const useEditorStore = create<Store>((set, get) => ({
   debouncedSaveToServer: debounce(() => {
     get().saveToServer();
   }, 500),
+
+  // SUBSCRIPTION
+  userSubscription: null,
+  setUserSubscription: (data: any) => set({ userSubscription: data }),
 
   // CLEANUP
   resetStore: () => {

@@ -9,7 +9,7 @@ exports.getSubscription = async (req, res, next) => {
       subscription = new SubscriptionModel({ userId });
     }
 
-    return res.status(500).json({
+    return res.status(200).json({
       success: true,
       message: "Subscription fetched successfully",
       data: {

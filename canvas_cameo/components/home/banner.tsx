@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 
 import { saveDesign } from "@/services/design-service";
 import { getUserSubscription } from "@/services/subscription-service";
+import { useEditorStore } from "@/store";
 
 interface DesignData {
   name: string;
@@ -20,6 +21,9 @@ interface DesignData {
 function Banner() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { userSubscription } = useEditorStore();
+
+  console.log(userSubscription, "userSubscription");
 
   const handleCreateDesign = async () => {
     if (loading) return;
@@ -47,15 +51,6 @@ function Banner() {
       setLoading(false);
     }
   };
-
-  const fetchSubscription = async () => {
-    const response = await getUserSubscription();
-    console.log(response, "response from fetchSubscription");
-  };
-
-  useEffect(() => {
-    fetchSubscription();
-  }, []);
 
   return (
     <>

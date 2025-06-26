@@ -24,6 +24,9 @@ type Store = {
   saveToServer: () => Promise<any>;
   debouncedSaveToServer: () => Promise<any> | void;
   userSubscription: any;
+  setUserSubscription: (data: any) => void;
+  setUserDesigns: (data: any) => void;
+  userDesigns: any;
 };
 
 export const useEditorStore = create<Store>((set, get) => ({
@@ -97,6 +100,9 @@ export const useEditorStore = create<Store>((set, get) => ({
   // SUBSCRIPTION
   userSubscription: null,
   setUserSubscription: (data: any) => set({ userSubscription: data }),
+
+  userDesigns: [],
+  setUserDesigns: (data: any) => set({ userDesigns: data }),
 
   // CLEANUP
   resetStore: () => {

@@ -5,20 +5,11 @@ import { useRouter } from "next/navigation";
 
 import { getUserDesigns } from "@/services/design-service";
 import DesignPreview from "./design-preview";
+import { useEditorStore } from "@/store";
 
 function RecentDesigns() {
-  const [userDesigns, setUserDesigns] = useState<any[]>([]);
   const router = useRouter();
-
-  async function fetchDesigns() {
-    const result = await getUserDesigns();
-    // console.log(result, "result from USER DESIGNS");
-    if (result?.success) setUserDesigns(result?.data);
-  }
-
-  useEffect(() => {
-    fetchDesigns();
-  }, []);
+  const { userDesigns } = useEditorStore();
 
   // const designs = Array(6)
   //   .fill(null)
@@ -36,7 +27,7 @@ function RecentDesigns() {
           {!userDesigns.length && (
             <h1 className="text-center text-2xl font-bold">No designs found</h1>
           )}
-          {userDesigns.map((design) => (
+          {userDesigns.map((design: any) => (
             <div
               key={design._id}
               className="group cursor-pointer"

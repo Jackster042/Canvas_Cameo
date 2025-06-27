@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import { saveDesign } from "@/services/design-service";
 import { getUserSubscription } from "@/services/subscription-service";
 import { useEditorStore } from "@/store";
+import { toast } from "sonner";
 
 interface DesignData {
   name: string;
@@ -21,11 +22,20 @@ interface DesignData {
 function Banner() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { userSubscription } = useEditorStore();
+  const { userSubscription, userDesigns } = useEditorStore();
 
   console.log(userSubscription, "userSubscription");
 
   const handleCreateDesign = async () => {
+    if (userDesigns.length >= 5 && !userSubscription?.isPremium) {
+      toast.error(
+        "You have reached the limit of 5 designs , Please upgrade your plan to create more",
+        {
+          duration: 3000,
+        }
+      );
+      return;
+    }
     if (loading) return;
     try {
       setLoading(true);

@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import ExportModal from "../export";
+import { toast } from "sonner";
 
 function Header() {
   const {
@@ -26,6 +27,8 @@ function Header() {
     saveStatus,
     markAsModified,
     designId,
+    userDesigns,
+    userSubscription,
   } = useEditorStore();
   const [showExportModal, setShowExportModal] = useState(false);
   const { data: session } = useSession();
@@ -48,6 +51,18 @@ function Header() {
     markAsModified();
   }, [name, canvas, designId]);
 
+  const handleExport = () => {
+    console.log(userDesigns, " userDesigns");
+    console.log(userSubscription, " userSubscription");
+    if (userDesigns?.length >= 5 && !userSubscription.isPremium) {
+      toast.error("Please upgrade to premium!", {
+        description: "You need to upgrade to premium to create more designs",
+      });
+
+      return;
+    }
+    setShowExportModal(true);
+  };
   return (
     <header className="header-gradient header flex items-center justify-between px-4 h-14">
       <div className="flex space-x-2 items-center">
@@ -83,11 +98,8 @@ function Header() {
             <Save className="w-5 h-5 cursor-pointer" />
           )}
         </button>
-        <button className="header-button ml-3 relative" title="Save">
-          <Upload
-            onClick={() => setShowExportModal(true)}
-            className="w-5 h-5 cursor-pointer"
-          />
+        <button className="header-button ml-3 relative" title="Upload">
+          <Upload onClick={handleExport} className="w-5 h-5 cursor-pointer" />
         </button>
       </div>
 

@@ -27,6 +27,12 @@ type Store = {
   setUserSubscription: (data: any) => void;
   setUserDesigns: (data: any) => void;
   userDesigns: any;
+  showDesignsModal: boolean;
+  setShowDesignsModal: (flag: boolean) => void;
+  showPremiumModal: boolean;
+  setShowPremiumModal: (flag: boolean) => void;
+  userDesignsLoading: boolean;
+  setUserDesignsLoading: (flag: boolean) => void;
 };
 
 export const useEditorStore = create<Store>((set, get) => ({
@@ -103,6 +109,15 @@ export const useEditorStore = create<Store>((set, get) => ({
 
   userDesigns: [],
   setUserDesigns: (data: any) => set({ userDesigns: data }),
+
+  userDesignsLoading: false,
+  setUserDesignsLoading: (flag) => set({ userDesignsLoading: flag }),
+
+  showPremiumModal: false,
+  setShowPremiumModal: (flag) => set({ showPremiumModal: flag }),
+
+  showDesignsModal: false,
+  setShowDesignsModal: (flag) => set({ showDesignsModal: flag }),
 
   // CLEANUP
   resetStore: () => {

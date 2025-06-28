@@ -16,6 +16,7 @@ import { useEditorStore } from "@/store";
 // SERVICES
 import { getUserDesignsByID } from "@/services/design-service";
 import Properties from "./properties";
+import SubscriptionModal from "../subcscription/premium-modal";
 
 function MainEditor() {
   const params = useParams();
@@ -35,6 +36,8 @@ function MainEditor() {
     setShowProperties,
     showProperties,
     isEditing,
+    setShowPremiumModal,
+    showPremiumModal,
   } = useEditorStore();
 
   useEffect(() => {
@@ -203,6 +206,10 @@ function MainEditor() {
       </div>
       {/* PROPERTIES */}
       {showProperties && isEditing && <Properties />}
+      <SubscriptionModal
+        isOpen={showPremiumModal}
+        onClose={setShowPremiumModal}
+      />
     </div>
   );
 }

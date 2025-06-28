@@ -10,9 +10,15 @@ import { useEditorStore } from "@/store";
 import { useEffect } from "react";
 import { getUserSubscription } from "@/services/subscription-service";
 import { getUserDesigns } from "@/services/design-service";
+import SubscriptionModal from "@/components/subcscription/premium-modal";
 
 export default function HomePage() {
-  const { setUserSubscription, setUserDesigns } = useEditorStore();
+  const {
+    setUserSubscription,
+    setUserDesigns,
+    showPremiumModal,
+    setShowPremiumModal,
+  } = useEditorStore();
 
   const fetchSubscription = async () => {
     const response = await getUserSubscription();
@@ -45,6 +51,10 @@ export default function HomePage() {
             <RecentDesigns />
           </main>
         </div>
+        <SubscriptionModal
+          isOpen={showPremiumModal}
+          onClose={setShowPremiumModal}
+        />
       </div>
     </>
   );

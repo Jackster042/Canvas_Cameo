@@ -10,11 +10,11 @@ export async function createPaypalOrder() {
   });
 }
 
-export async function capturePaypalOrder(orderId) {
-  return fetchWithAuth(`/v1/subscription/capture-order`, {
-    method: "post",
-    body: {
-      orderId,
-    },
-  });
-}
+// export async function capturePaypalOrder(orderId) {
+//   return fetchWithAuth(`/v1/subscription/capture-order`, {
+//     method: "post",
+//     body: {
+//       orderId,
+//     },
+//   });
+// }

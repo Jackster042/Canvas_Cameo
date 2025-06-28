@@ -6,6 +6,7 @@ import Link from "next/link";
 import { CreditCard, FolderOpen, Home, Plus } from "lucide-react";
 import { saveDesign } from "@/services/design-service";
 import { useRouter } from "next/navigation";
+import { useEditorStore } from "@/store";
 
 interface DesignData {
   name: string;
@@ -17,6 +18,7 @@ interface DesignData {
 
 export default function Sidebar() {
   const router = useRouter();
+  const { setShowPremiumModal } = useEditorStore();
 
   const handleCreateDesign = async () => {
     try {
@@ -74,16 +76,21 @@ export default function Sidebar() {
               active: false,
             },
           ].map((menuItem, index) => (
-            <div key={index} className="flex flex-col items-center w-full">
-              <Link
-                href="#"
-                className="w-full flex flex-col items-center py-2 text-gray-600 hover:bg-gray-100 hover:text-purple-600 rounded-full transition-colors duration-200"
-              >
+            <div
+              onClick={
+                menuItem.label === "Billing"
+                  ? () => setShowPremiumModal(true)
+                  : undefined
+              }
+              key={index}
+              className="flex flex-col items-center w-full cursor-pointer"
+            >
+              <div className="w-full flex flex-col items-center py-2 text-gray-600 hover:bg-gray-100 hover:text-purple-600 rounded-full transition-colors duration-200">
                 <div className="relative">{menuItem.icon}</div>
                 <span className="text-xs font-medium mt-1">
                   {menuItem.label}
                 </span>
-              </Link>
+              </div>
             </div>
           ))}
         </nav>

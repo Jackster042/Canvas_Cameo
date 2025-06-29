@@ -114,7 +114,7 @@ function Header() {
       <div className="flex items-center space-x-3">
         <button
           onClick={
-            !userSubscription.isPremium
+            !userSubscription?.isPremium
               ? () => setShowPremiumModal(true)
               : undefined
           }
@@ -122,7 +122,7 @@ function Header() {
         >
           <Star className="mr-1 w-4 h-4 text-yellow-400" />
           <span>
-            {!userSubscription.isPremium
+            {!userSubscription?.isPremium
               ? "Upgrade to Premium"
               : "Premium Member"}
           </span>

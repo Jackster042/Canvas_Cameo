@@ -29,6 +29,7 @@ function Header() {
     designId,
     userDesigns,
     userSubscription,
+    setShowPremiumModal,
   } = useEditorStore();
   const [showExportModal, setShowExportModal] = useState(false);
   const { data: session } = useSession();
@@ -111,9 +112,20 @@ function Header() {
         />
       </div>
       <div className="flex items-center space-x-3">
-        <button className="upgrade-button flex items-center bg-white/10 hover:bg-white/20 text-white rounded-md h-9 px-3 transition-colors ">
+        <button
+          onClick={
+            !userSubscription.isPremium
+              ? () => setShowPremiumModal(true)
+              : undefined
+          }
+          className="upgrade-button flex items-center bg-white/10 hover:bg-white/20 text-white rounded-md h-9 px-3 transition-colors "
+        >
           <Star className="mr-1 w-4 h-4 text-yellow-400" />
-          <span>Upgrade your plan</span>
+          <span>
+            {!userSubscription.isPremium
+              ? "Upgrade to Premium"
+              : "Premium Member"}
+          </span>
         </button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

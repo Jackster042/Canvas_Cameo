@@ -18,7 +18,7 @@ interface DesignData {
 
 export default function Sidebar() {
   const router = useRouter();
-  const { setShowPremiumModal } = useEditorStore();
+  const { setShowPremiumModal, setShowDesignsModal } = useEditorStore();
 
   const handleCreateDesign = async () => {
     try {
@@ -80,6 +80,8 @@ export default function Sidebar() {
               onClick={
                 menuItem.label === "Billing"
                   ? () => setShowPremiumModal(true)
+                  : menuItem.label === "Projects"
+                  ? () => setShowDesignsModal(true)
                   : undefined
               }
               key={index}

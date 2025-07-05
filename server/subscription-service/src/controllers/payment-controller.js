@@ -87,7 +87,7 @@ exports.capturePayment = async (req, res, next) => {
 
     const response = await axios({
       method: "post",
-      url: `${PAYPAL_API}/v2/checkout/orders/${orderId}/capture`,
+      url: `${PAYPAL_API}/v2/checkout/orders/${orderId}/capture`, // TODO: CHECK WHY V2
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -121,6 +121,16 @@ exports.capturePayment = async (req, res, next) => {
     res.status(500).json({
       success: false,
       message: "Error while capturing paypal order",
+    });
+  }
+};
+
+exports.verifyPayment = async (req, res) => {
+  try {
+  } catch (e) {
+    res.status(500).json({
+      success: false,
+      message: "Error while verifying paypal payment",
     });
   }
 };

@@ -5,7 +5,7 @@ import { useEditorStore } from "@/store";
 import DesignList from "./design-list";
 
 function RecentDesigns() {
-  const { userDesigns } = useEditorStore();
+  const { userDesigns, userDesignsLoading } = useEditorStore();
 
   // const designs = Array(6)
   //   .fill(null)
@@ -23,6 +23,8 @@ function RecentDesigns() {
           listOfDesigns={
             userDesigns && userDesigns.length > 0 ? userDesigns.slice(0, 5) : []
           }
+          isLoading={userDesignsLoading}
+          isModalView={false}
         />
       </div>
     </>

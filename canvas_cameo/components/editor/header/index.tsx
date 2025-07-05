@@ -113,11 +113,7 @@ function Header() {
       </div>
       <div className="flex items-center space-x-3">
         <button
-          onClick={
-            !userSubscription?.isPremium
-              ? () => setShowPremiumModal(true)
-              : undefined
-          }
+          onClick={() => setShowPremiumModal(true)}
           className="upgrade-button flex items-center bg-white/10 hover:bg-white/20 text-white rounded-md h-9 px-3 transition-colors "
         >
           <Star className="mr-1 w-4 h-4 text-yellow-400" />

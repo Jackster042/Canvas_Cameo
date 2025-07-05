@@ -21,6 +21,7 @@ function SubscriptionModal({ isOpen, onClose }: any) {
   const handleUpgrade = async () => {
     setIsLoading(true);
     const response = await createPaypalOrder();
+    console.log(response, "response from handleUpgrade");
 
     if (response.success) {
       window.location.href = response.data.approvalLink;
@@ -47,8 +48,8 @@ function SubscriptionModal({ isOpen, onClose }: any) {
                   <div className="bg-green-50 border border-green-100 rounded-lg p-4 mb-6">
                     <div className="flex items-center">
                       <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                      <p className="h-5 w-5 text-green-500 mr-2">
-                        Premium active since{" "}
+                      <p className="text-green-500 font-semibold">
+                        Premium active since
                         {new Date(
                           userSubscription?.premiumSince
                         ).toLocaleDateString() || "recently"}

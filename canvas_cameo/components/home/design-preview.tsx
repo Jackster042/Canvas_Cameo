@@ -9,7 +9,7 @@ const DesignPreview = ({ design }) => {
   const [canvasId] = useState(`canvas-${design._id}-${Date.now()}`);
   const fabricCanvasRef = useRef<StaticCanvas | null>(null);
   useEffect(() => {
-    if (!design.canvasData) return;
+    // if (!design.canvasData) return;
 
     const timer = setTimeout(async () => {
       try {
@@ -47,6 +47,16 @@ const DesignPreview = ({ design }) => {
               : design.canvasData;
         } catch (innerErr) {
           console.error(innerErr, "Error from parsing canvas");
+          return;
+        }
+
+        if (
+          canvasData === undefined ||
+          canvasData === null ||
+          canvasData?.objects?.length === 0
+        ) {
+          designPreviewCanvas.backgroundColor = "#21f365";
+          designPreviewCanvas.requestRenderAll();
           return;
         }
 

@@ -4,10 +4,22 @@ import React from "react";
 import { useRouter } from "next/navigation";
 
 import DesignPreview from "./design-preview";
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader } from "lucide-react";
 import { deleteDesign } from "@/services/design-service";
 
-function DesignList({ listOfDesigns: listOfDesigns }: any) {
+type Props = {
+  listOfDesigns: any[];
+  isLoading: boolean;
+  isModalView: boolean;
+  setShowDesignsModal: any;
+};
+
+function DesignList({
+  listOfDesigns,
+  isLoading,
+  isModalView,
+  setShowDesignsModal,
+}: Props) {
   const router = useRouter();
 
   const handleDeleteDesign = async (e: any, designId: string) => {
@@ -16,9 +28,15 @@ function DesignList({ listOfDesigns: listOfDesigns }: any) {
     if (response.success) window.location.reload();
   };
 
+  if (isLoading) return <Loader />;
+
   return (
     <>
-      <div className="grid grid-col-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div
+        className={`${
+          isModalView ? "p-4" : ""
+        } grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4`}
+      >
         {!listOfDesigns.length && (
           <h1 className="text-center text-2xl font-bold">No designs found</h1>
         )}
@@ -26,7 +44,10 @@ function DesignList({ listOfDesigns: listOfDesigns }: any) {
           <div
             key={design._id}
             className="group cursor-pointer"
-            onClick={() => router.push(`/editor/${design._id}`)}
+            onClick={() => {
+              router.push(`/editor/${design?._id}`);
+              isModalView ? setShowDesignsModal(false) : null;
+            }}
           >
             <div className="w-[300px] h-[300px] rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md">
               {design?.canvasData && (

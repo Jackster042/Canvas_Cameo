@@ -71,7 +71,7 @@ export const useEditorStore = create<Store>((set, get) => ({
         isModified: true,
       });
 
-      get().debouncedSaveToServer(); //TODO: ADD LATER .W SAVE TO SERVER METHOD IN ZUSTAND
+      get().debouncedSaveToServer();
     } else {
       console.error("Design ID not found");
     }

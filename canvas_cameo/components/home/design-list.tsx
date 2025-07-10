@@ -11,7 +11,7 @@ type Props = {
   listOfDesigns: any[];
   isLoading: boolean;
   isModalView: boolean;
-  setShowDesignsModal: any;
+  setShowDesignsModal?: any;
 };
 
 function DesignList({

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { designTypes } from "@/config";
 import { Loader } from "lucide-react";
@@ -27,7 +29,6 @@ function DesignTypes() {
     if (loading) return;
     try {
       setLoading(true);
-
       const initialDesignData = {
         name: getCurrentType.label,
         canvasData: null,

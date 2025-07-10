@@ -13,11 +13,13 @@ import { useEditorStore } from "@/store";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ExportModal from "../export";
 import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
+import { saveDesign } from "@/services/design-service";
+import { set } from "lodash";
 
 function Header() {
   const {
@@ -36,9 +38,47 @@ function Header() {
   const [showExportModal, setShowExportModal] = useState(false);
   const { data: session } = useSession();
 
+  const [localName, setLocalName] = useState(name);
+  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
+  const debounceSave = useCallback(
+    (newName: string) => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+
+      const timer = setTimeout(() => {
+        setName(newName);
+        markAsModified();
+        if (designId) {
+          saveDesign({ name: newName }, designId);
+        }
+      }, 1000);
+
+      setDebounceTimer(timer);
+    },
+    [debounceTimer, setName, markAsModified, designId, saveDesign]
+  );
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setLocalName(newName);
+    debounceSave(newName);
+  };
+
   const handleLogout = async () => {
     await signOut();
   };
+
+  useEffect(() => {
+    setLocalName(name);
+  }, [name]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+    };
+  }, [debounceTimer]);
 
   useEffect(() => {
     if (!canvas) return;
@@ -118,8 +158,9 @@ function Header() {
       <div className="flex-1 flex justify-center max-w-md">
         <Input
           className="w-full"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={localName}
+          // onChange={(e) => setName(e.target.value)}
+          onChange={handleNameChange}
         />
       </div>
       <div className="flex items-center space-x-3">

@@ -193,8 +193,15 @@ function MainEditor() {
     };
   }, [canvas]);
 
+  useEffect(() => {
+    document.documentElement.style.overflowY = "auto"; // or "hidden"
+    return () => {
+      document.documentElement.style.overflowY = "scroll"; // reset when leaving
+    };
+  }, []);
+
   return (
-    <div className="flex flex-col overflow-hidden h-screen">
+    <div className="flex flex-col overflow-hidden overflow-y-hidden h-screen">
       <Header />
       <div className="flex flex-1 overflow-hidden">
         {isEditing && <Sidebar />}

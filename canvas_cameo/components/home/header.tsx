@@ -43,18 +43,17 @@ export default function Header() {
                       {session?.user?.name?.[0]?.toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium hidden lg:block">
+                  <span className="text-sm font-medium hidden lg:block h-5">
                     {session?.user?.name || "User"}
                   </span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="w-56 mt-1"
-                sideOffset={8}
+                className="w-56 z-50 transition-all duration-150 ease-out animate-fade-in"
               >
                 <DropdownMenuItem
-                  className="cursor-pointer focus:bg-gray-100"
+                  className="cursor-pointer"
                   onClick={handleLogout}
                 >
                   <LogOut className="w-4 h-4 mr-2" />

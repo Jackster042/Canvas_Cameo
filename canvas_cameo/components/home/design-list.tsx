@@ -35,7 +35,8 @@ function DesignList({
       <div
         className={`${
           isModalView ? "p-4" : ""
-        } grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4`}
+        } grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6
+`}
       >
         {!listOfDesigns.length && (
           <h1 className="text-center text-2xl font-bold">No designs found</h1>
@@ -49,7 +50,7 @@ function DesignList({
               isModalView ? setShowDesignsModal(false) : null;
             }}
           >
-            <div className="w-[300px] h-[300px] rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md">
+            <div className="w-full aspect-square max-w-[300px] mx-auto rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md">
               {design?.canvasData && (
                 <DesignPreview key={design._id} design={design} />
               )}

@@ -112,6 +112,19 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+html {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+body {
+  width: 100vw;
+  overflow-x: hidden;
+}
+body[style*="pointer-events: none"] {
+  pointer-events: auto !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -120,7 +133,6 @@
     @apply bg-background text-foreground;
   }
 }
-
 /* Header gradient background */
 .header-gradient {
   background: linear-gradient(90deg, #0099ff 0%, #4c6fff 100%);

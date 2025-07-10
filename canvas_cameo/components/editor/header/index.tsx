@@ -16,6 +16,8 @@ import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import ExportModal from "../export";
 import { toast } from "sonner";
+import Link from "next/link";
+import Image from "next/image";
 
 function Header() {
   const {
@@ -67,6 +69,15 @@ function Header() {
   return (
     <header className="header-gradient header flex items-center justify-between px-4 h-14">
       <div className="flex space-x-2 items-center">
+        <Link href="/">
+          <Image
+            src="https://static.canva.com/web/images/856bac30504ecac8dbd38dbee61de1f1.svg"
+            alt="canvas cameo"
+            width={70}
+            height={30}
+            priority
+          />
+        </Link>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="header-button flex items-center text-white">

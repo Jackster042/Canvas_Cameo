@@ -4,6 +4,5 @@
   "/editor/[slug]/page": "app/editor/[slug]/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/login/page": "app/login/page.js",
-  "/page": "app/page.js",
-  "/subscription/success/page": "app/subscription/success/page.js"
+  "/page": "app/page.js"
 }

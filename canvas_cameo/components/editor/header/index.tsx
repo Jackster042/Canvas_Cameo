@@ -159,7 +159,6 @@ function Header() {
         <Input
           className="w-full"
           value={localName}
-          // onChange={(e) => setName(e.target.value)}
           onChange={handleNameChange}
         />
       </div>

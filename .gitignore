@@ -4,6 +4,10 @@ node_modules/
 canvas_cameo/.env.local
 .env
 
+# Next.js
+.next/
+out/
+
 /server/api-getaway/.env
 /server/design-service/.env
 /server/subscription-service/.env

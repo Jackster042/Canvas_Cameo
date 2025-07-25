@@ -4,7 +4,7 @@ const MediaModel = require("../models/media");
 const { uploadMediaToCloudinary } = require("../utils/cloudinary");
 
 const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
-const STABILITY_ENGINE_ID = "stable-diffusion-v1-6";
+const STABILITY_ENGINE_ID = "stable-diffusion-xl-1024-v1-0";
 const STABILITY_API_HOST = "https://api.stability.ai";
 
 const generateImageFromAIAndUploadToDb = async (req, res) => {

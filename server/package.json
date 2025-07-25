@@ -1,0 +1,14 @@
+{
+  "name": "canvas-cameo-backend",
+  "private": true,
+  "scripts": {
+    "start:gateway": "cd api-getaway && npm run dev",
+    "start:design": "cd design-service && npm start",
+    "start:upload": "cd upload-service && npm start",
+    "start:subscription": "cd subscription-service && npm start",
+    "start:all": "concurrently \"npm:start:gateway\" \"npm:start:design\" \"npm:start:upload\" \"npm:start:subscription\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

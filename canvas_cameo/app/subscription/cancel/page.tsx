@@ -1,7 +1,7 @@
 "use client";
 
-function SubscriptionCancel() {
+export default function SubscriptionCancel() {
   return (
-    <div>Some error occured while processing payment! Please try again</div>
+      <div>Some error occurred while processing payment! Please try again</div>
   );
 }

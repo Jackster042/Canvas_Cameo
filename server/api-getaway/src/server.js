@@ -3,92 +3,111 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
-const path = require("path");
 const proxy = require("express-http-proxy");
-const jwt = require("jsonwebtoken");
 const { authMiddleware } = require("./middlewares/auth-middleware");
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
+// Enhanced CORS configuration
+const allowedOrigins = [
+    "https://canvas-cameo.vercel.app",
+    "http://localhost:3000"
+];
+
 app.use(helmet());
-
-
 app.use(cors({
-    origin: [
-        "https://canvas-cameo.vercel.app", // Explicit production URL
-        "http://localhost:3000" // Local dev
-    ],
-    credentials: true, // REQUIRED for withCredentials
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Authorization']
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// PROXY OPTIONS (updated version)
-const proxyOptions = {
+// Enhanced Proxy Options
+const createProxyOptions = (serviceName) => ({
     proxyReqPathResolver: (req) => {
         return req.originalUrl.replace(/^\/v1/, "/api");
     },
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
-        // Forward CORS headers
         proxyReqOpts.headers = {
             ...proxyReqOpts.headers,
-            'Access-Control-Allow-Credentials': 'true',
-            'Access-Control-Allow-Origin': srcReq.headers.origin || allowedOrigins[0]
+            'x-user-id': srcReq.user?.userId || '',
+            'x-user-email': srcReq.user?.email || '',
+            'Authorization': srcReq.headers.authorization || ''
         };
         return proxyReqOpts;
     },
     proxyErrorHandler: (err, res, next) => {
-        console.error('Proxy error:', err);
+        console.error(`Proxy error to ${serviceName}:`, {
+            message: err.message,
+            code: err.code,
+            stack: err.stack
+        });
         res.status(502).json({
-            message: "Bad Gateway",
-            error: err.message
+            error: "Bad Gateway",
+            service: serviceName,
+            message: process.env.NODE_ENV === 'development' ? err.message : 'Service unavailable'
         });
     }
-};
+});
 
-app.use(
-  "/v1/designs",
-  authMiddleware,
-  proxy(process.env.DESIGN, { ...proxyOptions })
+// Routes with enhanced logging
+app.use("/v1/designs",
+    authMiddleware,
+    proxy(process.env.DESIGN, createProxyOptions('DESIGN'))
 );
 
-app.use(
-  "/v1/media/upload",
-  authMiddleware,
-  proxy(process.env.UPLOAD, {
-    ...proxyOptions,
-    parseReqBody: false,
-  })
+app.use("/v1/media/upload",
+    authMiddleware,
+    proxy(process.env.UPLOAD, {
+        ...createProxyOptions('UPLOAD'),
+        parseReqBody: false
+    })
 );
 
-app.use(
-  "/v1/media",
-  authMiddleware,
-  proxy(process.env.UPLOAD, {
-    ...proxyOptions,
-    parseReqBody: true,
-  })
+app.use("/v1/media",
+    authMiddleware,
+    proxy(process.env.UPLOAD, {
+        ...createProxyOptions('UPLOAD'),
+        parseReqBody: true
+    })
 );
 
-// TODO: SUBSCRIPTION SERVICE LATER
-app.use(
-  "/v1/subscription",
-      authMiddleware,
-      proxy(process.env.SUBSCRIPTION, { ...proxyOptions })
+app.use("/v1/subscription",
+    authMiddleware,
+    proxy(process.env.SUBSCRIPTION, createProxyOptions('SUBSCRIPTION'))
 );
 
-// Health Check
-app.get("/health", (req, res) => res.sendStatus(200));
+// Enhanced health check
+app.get("/health", (req, res) => {
+    res.json({
+        status: "OK",
+        services: {
+            design: !!process.env.DESIGN,
+            upload: !!process.env.UPLOAD,
+            subscription: !!process.env.SUBSCRIPTION
+        }
+    });
+});
 
-app.listen(PORT,"0.0.0.0", () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`API Gateway running on 0.0.0.0:${PORT}`);
-    console.log(`Proxying to:`);
-  console.log(`DESIGN Service is running on port ${process.env.DESIGN}`);
-  console.log(`UPLOAD Service is running on port ${process.env.UPLOAD}`);
-  console.log(
-    `SUBSCRIPTION Service is running on port ${process.env.SUBSCRIPTION}`
-  );
+    console.log("Proxying to:");
+    console.log(`DESIGN: ${process.env.DESIGN}`);
+    console.log(`UPLOAD: ${process.env.UPLOAD}`);
+    console.log(`SUBSCRIPTION: ${process.env.SUBSCRIPTION}`);
+
+    if (!process.env.DESIGN || !process.env.UPLOAD || !process.env.SUBSCRIPTION) {
+        console.error("WARNING: Missing service environment variables!");
+    }
 });

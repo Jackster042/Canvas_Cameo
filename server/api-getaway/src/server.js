@@ -9,10 +9,19 @@ const jwt = require("jsonwebtoken");
 const { authMiddleware } = require("./middlewares/auth-middleware");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: [
+        process.env.FRONTEND_URL, // Auto-swaps between local/prod
+        "https://canvas-cameo.vercel.app", // Explicit production URL
+        "https://*.vercel.app", // All Vercel preview deployments
+        "http://localhost:3000" // Local dev
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true // If using cookies/auth
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -60,8 +69,12 @@ app.use(
   proxy(process.env.SUBSCRIPTION, { ...proxyOptions })
 );
 
-app.listen(PORT, () => {
-  console.log(`API Gateway is running on port ${PORT}`);
+// Health Check
+app.get("/health", (req, res) => res.sendStatus(200));
+
+app.listen(PORT,"0.0.0.0", () => {
+    console.log(`API Gateway running on 0.0.0.0:${PORT}`);
+    console.log(`Proxying to:`);
   console.log(`DESIGN Service is running on port ${process.env.DESIGN}`);
   console.log(`UPLOAD Service is running on port ${process.env.UPLOAD}`);
   console.log(

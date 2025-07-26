@@ -1,11 +1,11 @@
 import { getSession } from "next-auth/react";
-import axios, { AxiosRequestConfig, RawAxiosRequestHeaders } from "axios";
+import axios, {AxiosRequestConfig, AxiosHeaders, AxiosError, RawAxiosRequestHeaders} from "axios";
 
-const API_URL = process.env.API_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export async function fetchWithAuth(
-  endpoint: string,
-  options: RequestInit = {}
+    endpoint: string,
+    options: RequestInit = {}
 ) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized access");
@@ -18,8 +18,8 @@ export async function fetchWithAuth(
 
     // Remove leading slash from endpoint if it exists
     const cleanEndpoint = endpoint.startsWith("/")
-      ? endpoint.slice(1)
-      : endpoint;
+        ? endpoint.slice(1)
+        : endpoint;
 
     const config: AxiosRequestConfig = {
       url: `${API_URL}/${cleanEndpoint}`,

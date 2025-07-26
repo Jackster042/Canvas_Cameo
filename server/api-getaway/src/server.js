@@ -12,29 +12,41 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 app.use(helmet());
+
+
 app.use(cors({
     origin: [
         "https://canvas-cameo.vercel.app", // Explicit production URL
         "http://localhost:3000" // Local dev
     ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true // If using cookies/auth
+    credentials: true, // REQUIRED for withCredentials
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// PROXY OPTIONS
+// PROXY OPTIONS (updated version)
 const proxyOptions = {
-  proxyReqPathResolver: (req) => {
-    return req.originalUrl.replace(/^\/v1/, "/api");
-  },
-  proxyErrorHandler: (err, res, next) => {
-    return res.status(500).json({
-      message: "An error occurred while proxying the request",
-      error: err.message,
-    });
-  },
+    proxyReqPathResolver: (req) => {
+        return req.originalUrl.replace(/^\/v1/, "/api");
+    },
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        // Forward CORS headers
+        proxyReqOpts.headers = {
+            ...proxyReqOpts.headers,
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Origin': srcReq.headers.origin || allowedOrigins[0]
+        };
+        return proxyReqOpts;
+    },
+    proxyErrorHandler: (err, res, next) => {
+        console.error('Proxy error:', err);
+        res.status(502).json({
+            message: "Bad Gateway",
+            error: err.message
+        });
+    }
 };
 
 app.use(
@@ -64,8 +76,8 @@ app.use(
 // TODO: SUBSCRIPTION SERVICE LATER
 app.use(
   "/v1/subscription",
-  authMiddleware,
-  proxy(process.env.SUBSCRIPTION, { ...proxyOptions })
+      authMiddleware,
+      proxy(process.env.SUBSCRIPTION, { ...proxyOptions })
 );
 
 // Health Check

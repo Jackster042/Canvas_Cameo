@@ -4,8 +4,8 @@ services:
     name: canvas-cameo-gateway
     env: node
     plan: free
-    buildCommand: cd server/api-gateway && npm install
-    startCommand: cd server/api-gateway && node src/server.js
+    buildCommand: cd server/api-getaway && npm install
+    startCommand: cd server/api-getaway && node src/server.js
     envVars:
       - key: PORT
         value: 10000

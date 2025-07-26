@@ -14,12 +14,11 @@ const PORT = process.env.PORT || 10000;
 app.use(helmet());
 app.use(cors({
     origin: [
-        process.env.FRONTEND_URL, // Auto-swaps between local/prod
         "https://canvas-cameo.vercel.app", // Explicit production URL
-        "https://*.vercel.app", // All Vercel preview deployments
         "http://localhost:3000" // Local dev
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true // If using cookies/auth
 }));
 app.use(express.json());

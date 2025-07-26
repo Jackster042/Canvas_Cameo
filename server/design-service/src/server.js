@@ -9,7 +9,7 @@ const helmet = require("helmet");
 const designRoutes = require("./routes/design-routes");
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT ||10000;
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -25,7 +25,7 @@ app.use("/api/designs", designRoutes);
 
 async function startServer() {
   try {
-    app.listen(PORT, () =>
+    app.listen(PORT, "0.0.0.0",() =>
       console.log(`DESIGN Service running on port ${PORT}`)
     );
   } catch (error) {

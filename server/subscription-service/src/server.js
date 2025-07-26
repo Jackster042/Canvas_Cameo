@@ -6,7 +6,7 @@ const helmet = require("helmet");
 const subscriptionRoutes = require("./routes/subscription-routes");
 
 const app = express();
-const PORT = process.env.PORT || 5003;
+const PORT = process.env.PORT ||10000;
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -22,7 +22,7 @@ app.use("/api/subscription", subscriptionRoutes);
 
 async function startServer() {
   try {
-    app.listen(PORT, () =>
+    app.listen(PORT,"0.0.0.0", () =>
       console.log(`SUBSCRIPTION Service running on port ${PORT}`)
     );
   } catch (error) {

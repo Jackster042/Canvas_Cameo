@@ -6,7 +6,7 @@ const helmet = require("helmet");
 const mediaRoutes = require("./routes/upload-routes");
 
 const app = express();
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 10000;
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -22,7 +22,7 @@ app.use("/api/media", mediaRoutes);
 
 async function startServer() {
   try {
-    app.listen(PORT, () =>
+    app.listen(PORT, "0.0.0.0",() =>
       console.log(`UPLOAD Service running on port ${PORT}`)
     );
   } catch (error) {

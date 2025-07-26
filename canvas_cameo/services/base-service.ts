@@ -1,58 +1,44 @@
-// noinspection TypeScriptValidateTypes
+import { getSession } from "next-auth/react";
 
-import {getSession} from "next-auth/react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function fetchWithAuth(
     endpoint: string,
     options: RequestInit = {}
-) {
-  const session = await getSession();
-
-  if (!session?.idToken) {
-    console.error('No session or token found');
-    throw new Error("Authentication required");
-  }
-
-  // Add token refresh logic
-  if (session.expires && new Date(session.expires) < new Date()) {
-    console.log('Token expired, attempting refresh...');
-    // @ts-ignore
-    const newSession = await getSession({ forceRefresh: true });
-    if (!newSession?.idToken) {
-      throw new Error("Session expired, please re-authenticate");
-    }
-  }
-
-  const headers = new Headers(options.headers);
-  headers.set('Authorization', `Bearer ${session.idToken}`);
-  headers.set('Content-Type', 'application/json');
-
+): Promise<any> {
   try {
-    const cleanEndpoint = endpoint.replace(/^\//, '');
-    const url = `${API_URL}/${cleanEndpoint}`;
+    const session = await getSession();
 
-    console.log(`Making request to: ${url}`);
+    if (!session?.idToken) {
+      throw new Error("No authentication token found");
+    }
+
+    // Remove leading slash for consistency
+    const normalizedEndpoint = endpoint.startsWith('/')
+        ? endpoint.slice(1)
+        : endpoint;
+
+    const url = `${API_URL}/${normalizedEndpoint}`;
+
+    const headers = new Headers(options.headers || {});
+    headers.set('Authorization', `Bearer ${session.idToken}`);
+    headers.set('Content-Type', 'application/json');
+
     const response = await fetch(url, {
       ...options,
       headers,
-      credentials: 'include' // Important for cookies
+      credentials: 'include',
+      body: options.body ? JSON.stringify(options.body) : undefined
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || 'Request failed');
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
 
     return await response.json();
-  } catch (err) {
-    // @ts-ignore
-    const {message} = err;
-    console.error('API request failed:', {
-      endpoint,
-      error: message
-    });
-    throw err;
+  } catch (error) {
+    console.error(`API request failed for ${endpoint}:`, error);
+    throw error; // Re-throw to let calling code handle it
   }
 }

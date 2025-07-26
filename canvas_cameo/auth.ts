@@ -10,18 +10,40 @@ declare module "next-auth" {
   }
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Google],
+// export const { handlers, signIn, signOut, auth } = NextAuth({
+//   providers: [Google],
+//   callbacks: {
+//     async jwt({ token, account }: { token: any; account: any }) {
+//       if (account?.id_token) {
+//         token.idToken = account.id_token;
+//       }
+//       return token;
+//     },
+//     async session({ session, token }: { session: any; token: any }) {
+//       session.idToken = token.idToken;
+//       return session;
+//     },
+//   },
+// });
+
+export default NextAuth({
+  providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    })
+  ],
+  secret: process.env.AUTH_SECRET,
   callbacks: {
-    async jwt({ token, account }: { token: any; account: any }) {
+    async jwt({ token, account }) {
       if (account?.id_token) {
         token.idToken = account.id_token;
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
-      session.idToken = token.idToken;
+    async session({ session, token }) {
+      session.idToken = token.idToken as string;
       return session;
-    },
-  },
+    }
+  }
 });

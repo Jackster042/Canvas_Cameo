@@ -33,6 +33,7 @@ export async function saveCanvasState(
   if (!canvas) return false;
 
   try {
+    // @ts-ignore
     const canvasData = canvas.toJSON(["id", "filters"]);
 
     const designData = {

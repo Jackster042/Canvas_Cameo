@@ -1,5 +1,6 @@
-import { getSession } from "next-auth/react";
-import axios, {AxiosRequestConfig, AxiosHeaders, AxiosError, RawAxiosRequestHeaders} from "axios";
+// noinspection TypeScriptValidateTypes
+
+import {getSession} from "next-auth/react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -8,31 +9,50 @@ export async function fetchWithAuth(
     options: RequestInit = {}
 ) {
   const session = await getSession();
-  if (!session) throw new Error("Unauthorized access");
+
+  if (!session?.idToken) {
+    console.error('No session or token found');
+    throw new Error("Authentication required");
+  }
+
+  // Add token refresh logic
+  if (session.expires && new Date(session.expires) < new Date()) {
+    console.log('Token expired, attempting refresh...');
+    // @ts-ignore
+    const newSession = await getSession({ forceRefresh: true });
+    if (!newSession?.idToken) {
+      throw new Error("Session expired, please re-authenticate");
+    }
+  }
+
+  const headers = new Headers(options.headers);
+  headers.set('Authorization', `Bearer ${session.idToken}`);
+  headers.set('Content-Type', 'application/json');
 
   try {
-    const headers: RawAxiosRequestHeaders = {
-      Authorization: `Bearer ${session.idToken}`,
-      ...((options.headers as Record<string, string>) || {}),
-    };
+    const cleanEndpoint = endpoint.replace(/^\//, '');
+    const url = `${API_URL}/${cleanEndpoint}`;
 
-    // Remove leading slash from endpoint if it exists
-    const cleanEndpoint = endpoint.startsWith("/")
-        ? endpoint.slice(1)
-        : endpoint;
-
-    const config: AxiosRequestConfig = {
-      url: `${API_URL}/${cleanEndpoint}`,
-      method: options.method || "GET",
+    console.log(`Making request to: ${url}`);
+    const response = await fetch(url, {
+      ...options,
       headers,
-      data: options.body,
-      params: (options as any).params,
-    };
+      credentials: 'include' // Important for cookies
+    });
 
-    const response = await axios(config);
-    return response.data;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Request failed');
+    }
+
+    return await response.json();
   } catch (err) {
-    console.error(err, "Error fetching data");
-    throw new Error("API request failed");
+    // @ts-ignore
+    const {message} = err;
+    console.error('API request failed:', {
+      endpoint,
+      error: message
+    });
+    throw err;
   }
 }

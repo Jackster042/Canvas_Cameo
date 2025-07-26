@@ -1,0 +1,60 @@
+services:
+  # API Gateway (Public)
+  - type: web
+    name: canvas-cameo-gateway
+    env: node
+    plan: free
+    buildCommand: cd server/api-gateway && npm install
+    startCommand: cd server/api-gateway && node src/server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_URL
+        value: "https://canvas-cameo.vercel.app"
+      - key: DESIGN_SERVICE_URL
+        value: "http://canvas-cameo-design:10000"
+      - key: UPLOAD_SERVICE_URL
+        value: "http://canvas-cameo-upload:10000"
+      - key: SUBSCRIPTION_SERVICE_URL
+        value: "http://canvas-cameo-subscription:10000"
+      - key: JWT_SECRET
+        generateValue: true
+
+  # Design Service (Private)
+  - type: web
+    name: canvas-cameo-design
+    env: node
+    plan: free
+    buildCommand: cd server/design-service && npm install
+    startCommand: cd server/design-service && node src/server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        generateValue: true
+
+  # Upload Service (Private)
+  - type: web
+    name: canvas-cameo-upload
+    env: node
+    plan: free
+    buildCommand: cd server/upload-service && npm install
+    startCommand: cd server/upload-service && node src/server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        generateValue: true
+
+  # Subscription Service (Private)
+  - type: web
+    name: canvas-cameo-subscription
+    env: node
+    plan: free
+    buildCommand: cd server/subscription-service && npm install
+    startCommand: cd server/subscription-service && node src/server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        generateValue: true

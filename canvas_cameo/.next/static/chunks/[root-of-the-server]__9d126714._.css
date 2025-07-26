@@ -180,6 +180,7 @@
     --color-blue-100: oklch(93.2% .032 255.585);
     --color-blue-500: oklch(62.3% .214 259.815);
     --color-blue-600: oklch(54.6% .245 262.881);
+    --color-blue-700: oklch(48.8% .243 264.376);
     --color-violet-600: oklch(54.1% .281 293.009);
     --color-purple-50: oklch(97.7% .014 308.299);
     --color-purple-100: oklch(94.6% .033 307.174);
@@ -1221,6 +1222,10 @@
     overflow-y: hidden;
   }
 
+  .rounded {
+    border-radius: .25rem;
+  }
+
   .rounded-2xl {
     border-radius: var(--radius-2xl);
   }
@@ -2116,6 +2121,12 @@
   @media (hover: hover) {
     .hover\:bg-accent:hover {
       background-color: var(--accent);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-blue-700:hover {
+      background-color: var(--color-blue-700);
     }
   }
 
